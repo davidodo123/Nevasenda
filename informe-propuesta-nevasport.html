@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta de mejora para Nevasport.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --c-black:#181818; --c-blue:#1565c0; --c-blue-dark:#0d47a1;
+  --c-gray-100:#f4f5f6; --c-gray-300:#d9dcdf; --c-gray-600:#6b7280;
+  --font-base:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --font-heading:'Space Grotesk', var(--font-base);
+}
+*{ box-sizing:border-box; }
+body{ margin:0; font-family:var(--font-base); color:var(--c-black); line-height:1.55; font-size:14px; background:#fff; }
+h1,h2,h3,h4{ font-family:var(--font-heading); font-weight:700; letter-spacing:-.01em; margin:0 0 .4em; }
+h1{ font-size:2.4rem; }
+h2{ font-size:1.5rem; color:var(--c-blue-dark); border-bottom:2px solid var(--c-blue); padding-bottom:8px; margin-bottom:18px; }
+h3{ font-size:1.1rem; margin-top:1.4em; }
+p{ margin:0 0 .8em; }
+ul,ol{ margin:0 0 .8em; padding-left:1.3em; }
+li{ margin-bottom:4px; }
+.page{ max-width:860px; margin:0 auto; padding:50px 40px; page-break-after:always; }
+.page:last-child{ page-break-after:auto; }
+
+/* Portada */
+.cover{ height: calc(100vh - 100px); display:flex; flex-direction:column; justify-content:center; text-align:center; }
+.cover .tag{ display:inline-block; font-size:.8rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:var(--c-blue); border:1px solid var(--c-blue); border-radius:999px; padding:6px 18px; margin:0 auto 24px; }
+.cover h1{ font-size:3.2rem; }
+.cover h1 span{ color:var(--c-blue); }
+.cover .subtitle{ font-size:1.15rem; color:var(--c-gray-600); max-width:520px; margin:0 auto 40px; }
+.cover .meta{ font-size:.9rem; color:var(--c-gray-600); border-top:1px solid var(--c-gray-300); padding-top:18px; max-width:380px; margin:0 auto; }
+.cover .meta strong{ color:var(--c-black); }
+
+/* Tablas */
+table{ width:100%; border-collapse:collapse; margin:14px 0 24px; font-size:.88rem; }
+th,td{ border:1px solid var(--c-gray-300); padding:8px 10px; text-align:left; vertical-align:top; }
+th{ background:var(--c-gray-100); font-family:var(--font-heading); font-weight:700; font-size:.78rem; text-transform:uppercase; letter-spacing:.5px; }
+tr.accion-add td:first-child{ color:#1b7a3a; font-weight:700; }
+tr.accion-mejorar td:first-child{ color:var(--c-blue-dark); font-weight:700; }
+tr.accion-quitar td:first-child{ color:#b3261e; font-weight:700; }
+tr.accion-juntar td:first-child{ color:#8a5a00; font-weight:700; }
+tr.accion-mantener td:first-child{ color:var(--c-gray-600); font-weight:700; }
+
+/* Paleta */
+.paleta{ display:flex; gap:14px; margin:14px 0 24px; flex-wrap:wrap; }
+.swatch{ flex:1; min-width:110px; border:1px solid var(--c-gray-300); border-radius:6px; overflow:hidden; }
+.swatch .color{ height:54px; }
+.swatch .label{ padding:6px 10px; font-size:.78rem; font-family:var(--font-heading); font-weight:700; }
+.swatch .hex{ padding:0 10px 8px; font-size:.72rem; color:var(--c-gray-600); }
+
+/* Mockups antes/despues */
+.compare{ display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:16px 0 24px; }
+.frame{ border:1px solid var(--c-gray-300); border-radius:6px; overflow:hidden; }
+.frame-bar{ display:flex; gap:5px; align-items:center; padding:6px 10px; background:var(--c-gray-100); border-bottom:1px solid var(--c-gray-300); }
+.frame-bar span{ width:7px; height:7px; border-radius:50%; background:var(--c-gray-300); }
+.frame-label{ text-align:center; font-weight:700; font-size:.82rem; margin-bottom:8px; font-family:var(--font-heading); }
+.frame-body{ padding:10px; }
+.mock-row{ display:flex; gap:6px; margin-bottom:6px; }
+.mock-thumb{ width:36px; height:28px; background:var(--c-gray-300); border-radius:2px; flex-shrink:0; }
+.mock-lines{ flex:1; display:flex; flex-direction:column; gap:3px; justify-content:center; }
+.mock-lines span{ display:block; height:4px; background:var(--c-gray-300); border-radius:2px; }
+.mock-lines span:nth-child(1){ width:75%; }
+.mock-lines span:nth-child(2){ width:45%; }
+.mock-grid4{ display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-top:8px; }
+.mock-grid4 div{ aspect-ratio:1; background:var(--c-gray-100); border:1px solid var(--c-gray-300); border-radius:2px; }
+.mock-hero{ background:linear-gradient(135deg, var(--c-blue-dark), var(--c-black)); border-radius:4px; padding:16px 10px; text-align:center; margin-bottom:8px; }
+.mock-hero .t1{ height:8px; width:60%; background:rgba(255,255,255,.9); border-radius:2px; margin:0 auto 5px; }
+.mock-hero .t2{ height:5px; width:80%; background:rgba(255,255,255,.4); border-radius:2px; margin:0 auto 8px; }
+.mock-hero .b{ height:14px; width:54px; background:var(--c-blue); border-radius:3px; margin:0 auto; }
+.mock-cards3{ display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
+.mock-card{ border:1px solid var(--c-gray-300); border-radius:3px; overflow:hidden; }
+.mock-card .img{ height:28px; background:linear-gradient(135deg, var(--c-blue), var(--c-gray-300)); }
+.mock-card .txt{ padding:5px; }
+.mock-card .txt span{ display:block; height:4px; background:var(--c-gray-300); border-radius:2px; margin-bottom:3px; }
+.mock-card .badge{ display:inline-block; height:6px; width:20px; background:var(--c-blue); border-radius:2px; margin-top:3px; }
+
+/* PC vs movil */
+.devices{ display:grid; grid-template-columns:2fr 1fr; gap:20px; margin:16px 0 24px; align-items:start; }
+.device-frame{ border:1px solid var(--c-gray-300); border-radius:6px; overflow:hidden; }
+.device-label{ text-align:center; font-weight:700; font-size:.82rem; margin-bottom:8px; font-family:var(--font-heading); }
+.pc-body{ padding:10px; }
+.pc-nav{ display:flex; gap:8px; margin-bottom:8px; }
+.pc-nav span{ height:6px; background:var(--c-gray-300); border-radius:2px; flex:1; }
+.pc-nav span:first-child{ flex:0 0 50px; background:var(--c-blue); }
+.pc-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+.mobile-body{ padding:8px; max-width:120px; margin:0 auto; }
+.mobile-nav{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.mobile-nav .burger{ display:flex; flex-direction:column; gap:2px; }
+.mobile-nav .burger span{ width:14px; height:2px; background:var(--c-black); display:block; }
+.mobile-nav .logo{ height:6px; width:40px; background:var(--c-blue); border-radius:2px; }
+.mobile-stack{ display:flex; flex-direction:column; gap:6px; }
+.mobile-stack .mock-card .img{ height:40px; }
+
+/* Fases */
+.fases{ display:flex; gap:14px; margin:16px 0 24px; }
+.fase{ flex:1; border:1px solid var(--c-gray-300); border-radius:6px; padding:14px; }
+.fase .num{ font-family:var(--font-heading); font-size:1.6rem; font-weight:800; color:var(--c-blue); margin-bottom:6px; }
+.fase h4{ margin:0 0 6px; font-size:.95rem; font-family:var(--font-heading); }
+.fase p{ font-size:.82rem; color:var(--c-gray-600); margin:0; }
+
+.note{ background:var(--c-gray-100); border-left:3px solid var(--c-blue); padding:10px 14px; font-size:.88rem; margin:14px 0; }
+
+@media print{
+  .page{ padding:0; max-width:none; }
+  .cover{ height:100vh; }
+  a{ color:inherit; text-decoration:none; }
+  * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+@page{ size:A4; margin:18mm; }
+</style>
+</head>
+<body>
+
+<!-- PORTADA -->
+<section class="page cover">
+  <span class="tag">Propuesta técnica</span>
+  <h1>Evolución digital de <span>Nevasport</span></h1>
+  <p class="subtitle">Diagnóstico, propuesta de diseño, tecnologías y plan de implementación orientado a visibilidad, modernidad y experiencia móvil.</p>
+  <div class="meta">
+    Preparado por <strong>David</strong>, Desarrollo web<br>
+    davidsantiagoybermudez@gmail.com<br>
+    14 de junio de 2026
+  </div>
+</section>
+
+<!-- 1. RESUMEN -->
+<section class="page">
+  <h2>1. Resumen ejecutivo</h2>
+  <p>Nevasport es un portal consolidado: comunidad activa en foros, archivo de contenido extenso y una red de portales relacionados (viajes.nevasport.com, infonieve.es, pyreneige.fr). Ese es su activo principal y no se toca.</p>
+  <p>Lo que frena su crecimiento hoy es lo que rodea ese contenido: diseño visual desactualizado, densidad de información alta, experiencia móvil mejorable y oportunidades de SEO sin explotar (datos estructurados, velocidad de carga).</p>
+  <p>Esta propuesta plantea una <strong>renovación progresiva, por capas</strong>: empezar con un módulo piloto (rutas/senderismo) con diseño y tecnología nuevos, sin tocar la plataforma actual ni los foros, y extender lo que funcione al resto del sitio.</p>
+  <div class="note">Objetivo medible: más tiempo en página, mejor posicionamiento en Google, mejor experiencia en móvil (donde está la mayoría del tráfico) y una imagen de marca más actual.</div>
+</section>
+
+<!-- 2. ANALISIS ACTUAL -->
+<section class="page">
+  <h2>2. Análisis del sitio actual</h2>
+  <h3>Plataforma</h3>
+  <ul>
+    <li><strong>Backend a medida en PHP</strong> (no WordPress, no Drupal), desarrollo propio de larga trayectoria.</li>
+    <li><strong>Foros con Phorum</strong> (<code>/phorum/</code>), pieza clave de la comunidad.</li>
+    <li><strong>Red multiportal</strong>: nevasport.com, viajes.nevasport.com, infonieve.es, pyreneige.fr. Comparten infraestructura y políticas (CSP compartido).</li>
+    <li>Servidor nginx + Plesk, jQuery en frontend, sin framework CSS visible (estilos propios).</li>
+    <li>Ya existe soporte de <strong>modo oscuro</strong> a nivel de cookie/preferencia, buena base para una identidad visual renovada.</li>
+  </ul>
+  <h3>Fortalezas a conservar</h3>
+  <ul>
+    <li>Comunidad activa (foros) y volumen de contenido (noticias, reportajes, material).</li>
+    <li>Reconocimiento de marca y red de portales asociados.</li>
+    <li>Datos meteo/estaciones (Infonieve), diferenciador frente a portales genéricos.</li>
+  </ul>
+  <h3>Puntos de mejora</h3>
+  <ul>
+    <li>Diseño visual de "portal de noticias 2012": grids densos, tipografía sin jerarquía, poca identidad de marca.</li>
+    <li>Sin datos estructurados (schema.org) → menos visibilidad en resultados de Google (rich snippets).</li>
+    <li>Sin filtros ni fichas técnicas estructuradas en contenido de rutas/reportajes.</li>
+    <li>Experiencia móvil funcional pero "adaptada", no diseñada mobile-first.</li>
+    <li>Sin galería con lightbox ni componentes visuales modernos (microinteracciones, scroll-reveal).</li>
+  </ul>
+</section>
+
+<!-- 3. QUE CAMBIA -->
+<section class="page">
+  <h2>3. Qué mantendría, añadiría, mejoraría, quitaría y uniría</h2>
+  <table>
+    <thead><tr><th style="width:14%">Acción</th><th style="width:28%">Elemento</th><th>Detalle y motivo</th></tr></thead>
+    <tbody>
+      <tr class="accion-mantener">
+        <td>Mantener</td>
+        <td>Foros (Phorum) y comunidad</td>
+        <td>Activo más valioso del portal. Solo refresco visual de cabecera/estilos para que combine con el nuevo diseño, sin tocar funcionalidad.</td>
+      </tr>
+      <tr class="accion-mantener">
+        <td>Mantener</td>
+        <td>Red multiportal (viajes, infonieve, pyreneige)</td>
+        <td>Se conserva la estructura de subdominios; el nuevo sistema de diseño se piensa para poder extenderse a estos portales más adelante.</td>
+      </tr>
+      <tr class="accion-add">
+        <td>Añadir</td>
+        <td>Fichas técnicas de ruta</td>
+        <td>Distancia, desnivel, duración, dificultad y zona como datos estructurados (no texto suelto). Permite comparar rutas y mejora el SEO con schema.org.</td>
+      </tr>
+      <tr class="accion-add">
+        <td>Añadir</td>
+        <td>Buscador y filtros</td>
+        <td>Filtrar rutas/reportajes por zona, dificultad, distancia o estación. Hoy todo se navega como listado cronológico de noticias.</td>
+      </tr>
+      <tr class="accion-add">
+        <td>Añadir</td>
+        <td>Galería con lightbox + mapas interactivos</td>
+        <td>Fotos a pantalla completa con overlay/zoom; mapas embebidos (GPX/Wikiloc) en cada ficha de ruta.</td>
+      </tr>
+      <tr class="accion-add">
+        <td>Añadir</td>
+        <td>Datos estructurados SEO (schema.org / JSON-LD)</td>
+        <td>Marcar artículos y rutas para aparecer con más detalle (imagen, valoración, datos) en resultados de Google.</td>
+      </tr>
+      <tr class="accion-mejorar">
+        <td>Mejorar</td>
+        <td>Velocidad de carga</td>
+        <td>Imágenes optimizadas (WebP/AVIF + <code>loading="lazy"</code>), reducir JS innecesario. Impacta directamente en SEO (Core Web Vitals).</td>
+      </tr>
+      <tr class="accion-mejorar">
+        <td>Mejorar</td>
+        <td>Identidad visual</td>
+        <td>Tipografía con personalidad, jerarquía clara, espaciados generosos, paleta coherente (ver sección 4).</td>
+      </tr>
+      <tr class="accion-mejorar">
+        <td>Mejorar</td>
+        <td>Navegación móvil</td>
+        <td>Menú táctil simplificado, botones de tamaño adecuado, contenido reordenado para pantalla pequeña primero.</td>
+      </tr>
+      <tr class="accion-mejorar">
+        <td>Mejorar</td>
+        <td>Modo oscuro</td>
+        <td>Ya existe la base (cookie <code>darkmode</code>); integrarlo de forma consistente en el nuevo sistema de diseño.</td>
+      </tr>
+      <tr class="accion-quitar">
+        <td>Quitar</td>
+        <td>Código y plugins jQuery obsoletos</td>
+        <td>Reduce peso de página y superficie de vulnerabilidades; sustituir por JS moderno (vanilla / APIs nativas).</td>
+      </tr>
+      <tr class="accion-quitar">
+        <td>Quitar</td>
+        <td>Exceso de widgets/densidad en listados</td>
+        <td>Simplificar la sobreinformación visual de la home y archivos: menos bloques, más jerarquía.</td>
+      </tr>
+      <tr class="accion-juntar">
+        <td>Unir</td>
+        <td>Sistema de diseño común</td>
+        <td>Una única hoja de estilos base (tipografía, color, componentes) reutilizable entre nevasport, viajes, infonieve y pyreneige; hoy cada uno tira por su lado.</td>
+      </tr>
+      <tr class="accion-juntar">
+        <td>Unir</td>
+        <td>Contenido "rutas" + "reportajes de montaña"</td>
+        <td>Hoy son tipos de contenido separados sin relación. Unificar bajo una misma estructura de ficha permite cruzar información (ruta ↔ reportaje relacionado).</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 4. DISEÑO -->
+<section class="page">
+  <h2>4. Nuevo diseño visual</h2>
+  <h3>Paleta de color</h3>
+  <p>Blanco/negro como base (legibilidad, modo claro/oscuro) + azul como color de marca y de acción (enlaces, botones, badges).</p>
+  <div class="paleta">
+    <div class="swatch"><div class="color" style="background:#ffffff;border-bottom:1px solid #d9dcdf;"></div><div class="label">Blanco</div><div class="hex">#ffffff</div></div>
+    <div class="swatch"><div class="color" style="background:#181818;"></div><div class="label">Negro</div><div class="hex">#181818</div></div>
+    <div class="swatch"><div class="color" style="background:#1565c0;"></div><div class="label">Azul</div><div class="hex">#1565c0</div></div>
+    <div class="swatch"><div class="color" style="background:#0d47a1;"></div><div class="label">Azul oscuro</div><div class="hex">#0d47a1</div></div>
+    <div class="swatch"><div class="color" style="background:#f4f5f6;border:1px solid #d9dcdf;"></div><div class="label">Gris claro</div><div class="hex">#f4f5f6</div></div>
+  </div>
+  <h3>Tipografía</h3>
+  <p><strong style="font-family:'Space Grotesk';">Space Grotesk</strong> para titulares (geométrica, con carácter) + <strong>Inter</strong> para texto de cuerpo (alta legibilidad en pantalla). Tamaños fluidos (<code>clamp()</code>) para que escalen bien de móvil a escritorio.</p>
+
+  <h3>Estructura: antes / después</h3>
+  <div class="compare">
+    <div>
+      <div class="frame-label" style="color:var(--c-gray-600);">Actual</div>
+      <div class="frame">
+        <div class="frame-bar"><span></span><span></span><span></span></div>
+        <div class="frame-body">
+          <div class="mock-row"><div class="mock-thumb"></div><div class="mock-lines"><span></span><span></span></div></div>
+          <div class="mock-row"><div class="mock-thumb"></div><div class="mock-lines"><span></span><span></span></div></div>
+          <div class="mock-row"><div class="mock-thumb"></div><div class="mock-lines"><span></span><span></span></div></div>
+          <div class="mock-grid4"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="frame-label" style="color:var(--c-blue-dark);">Propuesta</div>
+      <div class="frame">
+        <div class="frame-bar"><span></span><span></span><span></span></div>
+        <div class="frame-body">
+          <div class="mock-hero"><div class="t1"></div><div class="t2"></div><div class="b"></div></div>
+          <div class="mock-cards3">
+            <div class="mock-card"><div class="img"></div><div class="txt"><span></span><span class="badge"></span></div></div>
+            <div class="mock-card"><div class="img"></div><div class="txt"><span></span><span class="badge"></span></div></div>
+            <div class="mock-card"><div class="img"></div><div class="txt"><span></span><span class="badge"></span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:.85rem;color:var(--c-gray-600);">Menos bloques por pantalla, más espacio, jerarquía clara (titular destacado → tarjetas con imagen, datos y badges).</p>
+</section>
+
+<!-- 5. TECNOLOGIAS -->
+<section class="page">
+  <h2>5. Tecnologías propuestas e integración</h2>
+  <p>Nevasport <strong>no es WordPress</strong>: es PHP a medida con foros Phorum. Migrar todo el portal a WordPress sería un proyecto enorme y arriesgado (foros, multiportal, histórico de contenido). Se propone un enfoque más realista, en dos niveles:</p>
+
+  <h3>Nivel 1: Modernización del frontend actual (bajo riesgo)</h3>
+  <ul>
+    <li>Nueva hoja de estilos basada en variables CSS (paleta/tipografía de la sección 4), aplicada sobre las plantillas PHP existentes.</li>
+    <li>JavaScript moderno (vanilla, sin jQuery) para menú móvil, animaciones de scroll y lightbox de galería.</li>
+    <li>Imágenes en formatos modernos (WebP/AVIF) con carga diferida (<code>loading="lazy"</code>).</li>
+    <li>Datos estructurados (JSON-LD) añadidos directamente en las plantillas PHP de artículos/rutas, sin cambiar el backend.</li>
+  </ul>
+
+  <h3>Nivel 2: Módulo piloto "Rutas/Senderismo" en WordPress (siguiendo el patrón ya existente de subdominios)</h3>
+  <p>Nevasport ya separa contenido en subdominios (<code>viajes.nevasport.com</code>, <code>infonieve.es</code>, <code>pyreneige.fr</code>). Siguiendo ese mismo patrón:</p>
+  <ul>
+    <li>Crear <code>rutas.nevasport.com</code> (o sección equivalente) en <strong>WordPress</strong>, con:
+      <ul>
+        <li>CPT "Ruta" con campos técnicos (distancia, desnivel, duración).</li>
+        <li>Taxonomías "Dificultad" y "Zona" para filtros.</li>
+        <li>Plantillas con el nuevo diseño descrito en la sección 4.</li>
+        <li>Galería con lightbox y mapas embebidos.</li>
+      </ul>
+    </li>
+    <li>Enlazado desde el menú principal de nevasport.com, sin tocar el backend PHP existente.</li>
+    <li>Si el piloto funciona (métricas de tráfico/tiempo en página), se valora extender el sistema de diseño al resto del portal o migrar más secciones.</li>
+  </ul>
+
+  <div class="note">Ventaja de este enfoque: resultados visibles rápido y riesgo cero sobre la plataforma actual y los foros.</div>
+</section>
+
+<!-- 6. PC vs MOVIL -->
+<section class="page">
+  <h2>6. Experiencia en PC vs móvil</h2>
+  <p>La mayoría del tráfico de portales de este tipo es móvil. El diseño se piensa <strong>primero para móvil</strong> y se expande a escritorio, no al revés.</p>
+
+  <h3>Escritorio</h3>
+  <div class="device-frame">
+    <div class="pc-body">
+      <div class="pc-nav"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="mock-hero"><div class="t1"></div><div class="t2"></div><div class="b"></div></div>
+      <div class="pc-grid">
+        <div class="mock-card"><div class="img"></div><div class="txt"><span></span><span class="badge"></span></div></div>
+        <div class="mock-card"><div class="img"></div><div class="txt"><span></span><span class="badge"></span></div></div>
+        <div class="mock-card"><div class="img"></div><div class="txt"><span></span><span class="badge"></span></div></div>
+      </div>
+    </div>
+  </div>
+  <ul>
+    <li>Navegación horizontal completa, contenido en 3-4 columnas.</li>
+    <li>Mapas y galerías a mayor tamaño, con hover/microinteracciones.</li>
+    <li>Espacio para contenido relacionado (rutas similares, reportajes asociados).</li>
+  </ul>
+
+  <h3>Móvil</h3>
+  <div class="devices" style="grid-template-columns:1fr 2fr;">
+    <div class="device-frame">
+      <div class="mobile-body">
+        <div class="mobile-nav"><div class="logo"></div><div class="burger"><span></span><span></span><span></span></div></div>
+        <div class="mock-hero" style="padding:10px 6px;"><div class="t1"></div><div class="t2"></div><div class="b" style="width:40px;height:10px;"></div></div>
+        <div class="mobile-stack">
+          <div class="mock-card"><div class="img"></div><div class="txt"><span></span><span class="badge"></span></div></div>
+          <div class="mock-card"><div class="img"></div><div class="txt"><span></span><span class="badge"></span></div></div>
+        </div>
+      </div>
+    </div>
+    <ul style="margin-top:0;">
+      <li><strong>Menú hamburguesa</strong> con navegación simplificada (secciones principales primero).</li>
+      <li><strong>Una columna</strong>: tarjetas a ancho completo, imágenes primero, texto y badges debajo.</li>
+      <li><strong>Botones y enlaces grandes</strong> (mínimo ~44px) para uso táctil sin errores.</li>
+      <li><strong>Tipografía base legible</strong> (≥16px) sin necesidad de hacer zoom.</li>
+      <li><strong>Imágenes ligeras</strong> y carga diferida, prioridad a velocidad en datos móviles.</li>
+      <li><strong>Mapas</strong> con altura reducida y botón "ver en pantalla completa" en vez de mapa grande fijo.</li>
+      <li><strong>Filtros de rutas</strong> como panel desplegable, no barra lateral fija.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 7. PLAN -->
+<section class="page">
+  <h2>7. Plan de implementación</h2>
+  <div class="fases">
+    <div class="fase">
+      <div class="num">01</div>
+      <h4>Auditoría</h4>
+      <p>Revisión de plantillas PHP, rendimiento actual (Core Web Vitals) y estructura de contenido. Definición de qué se conserva y qué se rediseña primero.</p>
+    </div>
+    <div class="fase">
+      <div class="num">02</div>
+      <h4>Piloto: Rutas</h4>
+      <p>Construcción del módulo "Rutas/Senderismo" en WordPress con el nuevo diseño descrito en este documento, enlazado desde el menú principal.</p>
+    </div>
+    <div class="fase">
+      <div class="num">03</div>
+      <h4>Modernización frontend</h4>
+      <p>Aplicación del nuevo sistema de diseño (CSS/JS/imágenes/SEO) sobre las plantillas PHP existentes de noticias y reportajes, sin tocar foros ni backend.</p>
+    </div>
+    <div class="fase">
+      <div class="num">04</div>
+      <h4>Extensión</h4>
+      <p>Con datos del piloto, valorar extender el sistema a viajes/infonieve/pyreneige y seguir ampliando funcionalidades (filtros, mapas, newsletter).</p>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

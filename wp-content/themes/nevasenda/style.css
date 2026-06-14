@@ -24,6 +24,8 @@ Text Domain: nevasenda
   --c-gray-100: #f4f5f6;
   --c-gray-300: #d9dcdf;
   --c-gray-600: #6b7280;
+  --c-amber: #f0a93c;
+  --c-amber-rgb: 240, 169, 60;
   --font-base: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-heading: 'Space Grotesk', var(--font-base);
   --ease: cubic-bezier(.16, 1, .3, 1);
@@ -264,6 +266,57 @@ h3 { font-size: 1.4rem; }
 }
 .hero .btn { animation-delay: .35s; }
 
+.hero-stats {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  margin: 48px auto 0;
+  opacity: 0;
+  animation: fade-up .8s var(--ease) forwards;
+  animation-delay: .5s;
+}
+.hero-stat { min-width: 110px; }
+.hero-stat strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  color: var(--c-amber);
+}
+.hero-stat span {
+  display: block;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--c-gray-300);
+  margin-top: 4px;
+}
+
+.hero-scroll {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 42px;
+  border: 2px solid rgba(255, 255, 255, .5);
+  border-radius: 14px;
+  z-index: 1;
+}
+.hero-scroll span {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 4px;
+  height: 8px;
+  margin-left: -2px;
+  background: var(--c-white);
+  border-radius: 2px;
+  animation: scroll-cue 1.8s ease infinite;
+}
+
 /* ==========================================================================
    4. Secciones generales
    ========================================================================== */
@@ -302,9 +355,40 @@ h3 { font-size: 1.4rem; }
   box-shadow: var(--shadow-md);
   border-color: transparent;
 }
-.card-img { aspect-ratio: 4/3; overflow: hidden; background: var(--c-gray-300); }
+.card-img { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--c-gray-300); }
 .card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
 .card:hover .card-img img { transform: scale(1.08); }
+
+.card-overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  justify-content: space-around;
+  gap: 8px;
+  padding: 14px 12px;
+  background: linear-gradient(180deg, transparent, rgba(24, 24, 24, .85));
+  color: var(--c-white);
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  text-align: center;
+  transform: translateY(100%);
+  transition: transform .4s var(--ease);
+}
+.card-overlay strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  letter-spacing: 0;
+  color: var(--c-amber);
+}
+.card:hover .card-overlay,
+.card:focus-within .card-overlay {
+  transform: translateY(0);
+}
+@media (hover: none) {
+  .card-overlay { transform: translateY(0); }
+}
 .card-body { padding: 18px 20px; flex: 1; display: flex; flex-direction: column; }
 .card-body h3 { margin-bottom: 8px; }
 .card-body h3 a { color: var(--c-black); }
@@ -411,7 +495,8 @@ h3 { font-size: 1.4rem; }
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 220px;
+  grid-auto-rows: 200px;
+  grid-auto-flow: dense;
   gap: 14px;
 }
 .gallery-grid a {
@@ -422,6 +507,13 @@ h3 { font-size: 1.4rem; }
 }
 .gallery-grid a:nth-child(1) { grid-column: span 2; grid-row: span 2; }
 .gallery-grid a:nth-child(6) { grid-column: span 2; }
+.gallery-grid a:nth-child(9) { grid-row: span 2; }
+.gallery-grid a:nth-child(12) { grid-column: span 2; }
+
+.gallery-cta {
+  text-align: center;
+  margin-top: 36px;
+}
 
 .gallery-grid img {
   width: 100%;
@@ -441,9 +533,11 @@ h3 { font-size: 1.4rem; }
 .gallery-grid a:hover::after { opacity: 1; }
 
 @media (max-width: 760px) {
-  .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 160px; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 150px; }
   .gallery-grid a:nth-child(1) { grid-column: span 2; grid-row: span 2; }
   .gallery-grid a:nth-child(6) { grid-column: span 1; }
+  .gallery-grid a:nth-child(9) { grid-row: span 1; }
+  .gallery-grid a:nth-child(12) { grid-column: span 1; }
 }
 
 .lightbox {
@@ -481,6 +575,160 @@ h3 { font-size: 1.4rem; }
 }
 
 /* ==========================================================================
+   8d. Marquee de zonas
+   ========================================================================== */
+.marquee {
+  background: var(--c-black);
+  color: var(--c-white);
+  overflow: hidden;
+  padding: 16px 0;
+}
+.marquee-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 48px;
+  animation: marquee 32s linear infinite;
+  white-space: nowrap;
+  will-change: transform;
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-track span {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--c-gray-300);
+  display: inline-flex;
+  align-items: center;
+  gap: 48px;
+}
+.marquee-track span::after {
+  content: '\2022';
+  color: var(--c-amber);
+}
+
+/* ==========================================================================
+   8e. Scrollytelling
+   ========================================================================== */
+.scrolly-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+.scrolly-media {
+  position: sticky;
+  top: 110px;
+  aspect-ratio: 4/5;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.scrolly-media img { width: 100%; height: 100%; object-fit: cover; }
+.scrolly-items {
+  display: flex;
+  flex-direction: column;
+  gap: 90px;
+  padding: 6vh 0;
+}
+.scrolly-item {
+  opacity: .35;
+  padding-left: 24px;
+  border-left: 3px solid var(--c-gray-300);
+  transition: opacity .4s var(--ease), border-color .4s var(--ease);
+}
+.scrolly-item.is-active {
+  opacity: 1;
+  border-left-color: var(--c-amber);
+}
+.scrolly-num {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--c-blue);
+  font-size: .9rem;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+.scrolly-item p { color: var(--c-gray-600); }
+
+@media (max-width: 860px) {
+  .scrolly-grid { grid-template-columns: 1fr; gap: 30px; }
+  .scrolly-media { position: relative; top: 0; aspect-ratio: 16/9; }
+  .scrolly-items { padding: 0; gap: 32px; }
+  .scrolly-item { opacity: 1; }
+}
+
+/* ==========================================================================
+   8f. Comunidad y foro
+   ========================================================================== */
+.community-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.news-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 28px;
+}
+.forum-preview {
+  background: var(--c-white);
+  border: 1px solid var(--c-gray-300);
+  border-radius: 6px;
+  padding: 24px;
+}
+.forum-preview h3 { margin-bottom: 16px; }
+.forum-threads {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.forum-thread {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--c-blue);
+  color: var(--c-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+.forum-thread a { display: block; font-weight: 600; color: var(--c-black); font-size: .95rem; }
+.forum-thread a:hover { color: var(--c-blue); }
+.forum-meta { display: block; font-size: .8rem; color: var(--c-gray-600); margin-top: 2px; }
+
+.btn-outline-dark {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  padding: .7em 1.2em;
+  border: 2px solid var(--c-black);
+  color: var(--c-black);
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all .25s var(--ease);
+}
+.btn-outline-dark:hover { background: var(--c-black); color: var(--c-white); }
+
+@media (max-width: 860px) {
+  .community-grid { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
    8. Footer
    ========================================================================== */
 .site-footer {
@@ -509,6 +757,30 @@ h3 { font-size: 1.4rem; }
   color: var(--c-gray-600);
 }
 
+.footer-social {
+  display: flex;
+  gap: 14px;
+  margin-top: 14px;
+}
+.footer-social a {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-gray-300);
+  transition: transform .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease);
+}
+.footer-social a:hover {
+  background: var(--c-blue);
+  border-color: var(--c-blue);
+  color: var(--c-white);
+  transform: translateY(-3px);
+}
+.footer-social svg { width: 18px; height: 18px; fill: currentColor; }
+
 /* ==========================================================================
    9. Animaciones / scroll-reveal
    ========================================================================== */
@@ -520,6 +792,17 @@ h3 { font-size: 1.4rem; }
 @keyframes blob-float {
   0%, 100% { transform: translate(0, 0) scale(1); }
   50%      { transform: translate(-40px, 30px) scale(1.1); }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes scroll-cue {
+  0%   { opacity: 1; transform: translateY(0); }
+  70%  { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 0; transform: translateY(0); }
 }
 
 .reveal {
@@ -534,6 +817,10 @@ h3 { font-size: 1.4rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero h1, .hero p, .hero .btn, .reveal { animation: none !important; opacity: 1 !important; transform: none !important; transition: none !important; }
+  .hero h1, .hero p, .hero .btn, .hero-stats, .reveal { animation: none !important; opacity: 1 !important; transform: none !important; transition: none !important; }
   .hero::before, .hero::after { animation: none !important; }
+  .hero-scroll { display: none; }
+  .hero-scroll span { animation: none !important; }
+  .marquee-track { animation: none !important; }
+  .scrolly-item { opacity: 1 !important; }
 }
