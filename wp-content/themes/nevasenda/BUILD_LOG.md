@@ -49,6 +49,17 @@ Sitio WP local: `Local Sites/senderismo/app/public`. Tema custom clásico (sin c
 - **Importador demo actualizado**: ahora también sube imagen destacada por ruta (Cares, Órganos, Gredos, Veleta, Néouvielle) desde `uploads/2026/06/`.
 - **Reimportar con fotos**: si ya corriste `?nevasenda_import=1` antes, visita `?nevasenda_reset=1` (borra el contenido demo) y luego `?nevasenda_import=1` otra vez.
 
+## Paso 7 — Rediseño v2 (impacto visual, basado en investigación Awwwards/Komoot/AllTrails/Primland)
+- Nuevo acento `--c-amber: #f0a93c` en `:root` (azul/negro/blanco siguen dominando, ámbar solo pa highlights).
+- **Hero**: banda `.hero-stats` con contadores animados (rutas publicadas y km mapeados calculados de verdad desde los CPT `ruta`, comunidad/zonas como datos demo) + flecha `.hero-scroll` con animación de scroll-cue.
+- **Marquee**: franja negra con nombres de zonas en bucle infinito (`@keyframes marquee`, CSS puro, pausa en hover, se desactiva con `prefers-reduced-motion`).
+- **Tarjetas de ruta**: `.card-overlay` que aparece sobre la imagen (hover/focus o siempre en táctil vía `@media (hover:none)`) mostrando desnivel y duración.
+- **Scrollytelling**: nueva sección con imagen sticky + 4 bloques de texto que se resaltan según scroll (`IntersectionObserver`, clase `.is-active`), pensada pa explicar "por qué Nevasenda". En móvil se apila sin sticky.
+- **Comunidad y noticias**: sección combinada con 2 tarjetas de blog + bloque `.forum-preview` (3 hilos de ejemplo con avatar de inicial) como adelanto visual de un futuro foro.
+- **Galería**: ampliada de 8 a 14 fotos (`gallery-9..14.jpg` nuevas de Unsplash) con `grid-auto-flow: dense` y botón "Ver galería completa" hacia `/galeria/`.
+- **Footer**: bloque `.footer-social` con iconos SVG inline (Instagram/Facebook/YouTube, enlaces placeholder `#`).
+- `assets/animations.js`: añadido contador animado (`[data-counter]`, ease-out con `requestAnimationFrame`) y observer de scrollytelling; ambos respetan `prefers-reduced-motion`.
+
 ## Pendiente (próximos pasos)
 - Activar tema "Nevasenda" en Apariencia.
 - Crear menú "Menú principal" en Apariencia > Menús y asignarlo a `primary` (Inicio, Rutas, Blog, Material, Galería, Sobre nosotros, Contacto). Ajustes > Lectura: página de entradas = "Blog".

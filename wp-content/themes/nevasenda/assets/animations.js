@@ -92,4 +92,64 @@ document.addEventListener( 'DOMContentLoaded', function () {
 			if ( e.key === 'Escape' ) closeLightbox();
 		} );
 	}
+
+	// Contadores animados del hero
+	var reduceMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+	var counters = document.querySelectorAll( '[data-counter]' );
+	if ( counters.length ) {
+		if ( reduceMotion || ! ( 'IntersectionObserver' in window ) ) {
+			counters.forEach( function ( el ) {
+				el.textContent = el.getAttribute( 'data-target' );
+			} );
+		} else {
+			var animateCounter = function ( el ) {
+				var target   = parseInt( el.getAttribute( 'data-target' ), 10 ) || 0;
+				var duration = 1500;
+				var start    = null;
+
+				var step = function ( timestamp ) {
+					if ( start === null ) start = timestamp;
+					var progress = Math.min( ( timestamp - start ) / duration, 1 );
+					var eased    = 1 - Math.pow( 1 - progress, 3 );
+					el.textContent = Math.round( eased * target );
+					if ( progress < 1 ) {
+						requestAnimationFrame( step );
+					}
+				};
+				requestAnimationFrame( step );
+			};
+
+			var counterObserver = new IntersectionObserver( function ( entries, obs ) {
+				entries.forEach( function ( entry ) {
+					if ( entry.isIntersecting ) {
+						animateCounter( entry.target );
+						obs.unobserve( entry.target );
+					}
+				} );
+			}, { threshold: 0.4 } );
+
+			counters.forEach( function ( el ) { counterObserver.observe( el ); } );
+		}
+	}
+
+	// Scrollytelling: resalta el bloque activo según el scroll
+	var scrollyItems = document.querySelectorAll( '.scrolly-item' );
+	if ( scrollyItems.length ) {
+		if ( ! ( 'IntersectionObserver' in window ) ) {
+			scrollyItems.forEach( function ( el ) { el.classList.add( 'is-active' ); } );
+		} else {
+			scrollyItems[ 0 ].classList.add( 'is-active' );
+
+			var scrollyObserver = new IntersectionObserver( function ( entries ) {
+				entries.forEach( function ( entry ) {
+					if ( entry.isIntersecting ) {
+						scrollyItems.forEach( function ( el ) { el.classList.remove( 'is-active' ); } );
+						entry.target.classList.add( 'is-active' );
+					}
+				} );
+			}, { threshold: 0.6 } );
+
+			scrollyItems.forEach( function ( el ) { scrollyObserver.observe( el ); } );
+		}
+	}
 } );
