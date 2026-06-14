@@ -767,6 +767,64 @@ h3 { font-size: 1.4rem; }
 }
 
 /* ==========================================================================
+   7b. Foro real (Asgaros Forum)
+   ========================================================================== */
+.forum-wrapper {
+  background: var(--c-white);
+  border: 1px solid var(--c-gray-300);
+  border-radius: 6px;
+  padding: 24px;
+}
+#af-wrapper {
+  font-family: var(--font-base);
+  color: var(--c-black);
+}
+#af-wrapper a,
+#af-wrapper .main-title,
+#af-wrapper .statistics-icon,
+#af-wrapper .pagination-element.active {
+  color: var(--c-blue);
+}
+#af-wrapper a:hover { color: var(--c-blue-dark); }
+#af-wrapper .button-normal,
+#af-wrapper .button-neutral,
+#af-wrapper input[type="submit"],
+#af-wrapper input[type="button"] {
+  background-color: var(--c-blue);
+  border-color: var(--c-blue);
+  font-family: var(--font-base);
+  border-radius: 4px;
+}
+#af-wrapper .button-normal:hover,
+#af-wrapper .button-neutral:hover,
+#af-wrapper input[type="submit"]:hover,
+#af-wrapper input[type="button"]:hover {
+  background-color: var(--c-blue-dark);
+  border-color: var(--c-blue-dark);
+}
+#af-wrapper .content-element:nth-child(even) {
+  background-color: var(--c-gray-100);
+}
+#af-wrapper .forum-element:hover,
+#af-wrapper .topic-element:hover {
+  background-color: var(--c-gray-100);
+}
+#af-wrapper input[type="text"],
+#af-wrapper input[type="password"],
+#af-wrapper textarea,
+#af-wrapper select {
+  font-family: var(--font-base);
+  border-color: var(--c-gray-300);
+  border-radius: 4px;
+}
+#af-wrapper input[type="text"]:focus,
+#af-wrapper input[type="password"]:focus,
+#af-wrapper textarea:focus,
+#af-wrapper select:focus {
+  border-color: var(--c-blue);
+}
+
+/* ==========================================================================
    8. Footer
    ========================================================================== */
 .site-footer {

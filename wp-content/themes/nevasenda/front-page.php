@@ -18,6 +18,20 @@ if ( $todas_rutas->have_posts() ) {
 	}
 }
 wp_reset_postdata();
+
+// Foros reales (Asgaros Forum), si el plugin está activo
+$foros_preview = array();
+global $asgarosforum;
+if ( ! empty( $asgarosforum ) ) {
+	foreach ( $asgarosforum->content->get_categories( false ) as $categoria ) {
+		$foros = $asgarosforum->get_forums( $categoria->term_id );
+		if ( $foros ) {
+			foreach ( $foros as $foro ) {
+				$foros_preview[] = $foro;
+			}
+		}
+	}
+}
 ?>
 
 <section class="hero">
@@ -209,27 +223,23 @@ wp_reset_postdata();
 			<aside class="forum-preview">
 				<h3>Desde el foro</h3>
 				<ul class="forum-threads">
-					<li class="forum-thread">
-						<span class="avatar">M</span>
-						<div>
-							<a href="<?php echo esc_url( home_url( '/foro/#hilo-gredos' ) ); ?>">¿Cuándo es la mejor época pa el Circo de Gredos?</a>
-							<span class="forum-meta">12 respuestas · Marta</span>
-						</div>
-					</li>
-					<li class="forum-thread">
-						<span class="avatar">J</span>
-						<div>
-							<a href="<?php echo esc_url( home_url( '/foro/#hilo-organos' ) ); ?>">Estado del sendero a los Órganos tras las lluvias</a>
-							<span class="forum-meta">8 respuestas · Javi</span>
-						</div>
-					</li>
-					<li class="forum-thread">
-						<span class="avatar">L</span>
-						<div>
-							<a href="<?php echo esc_url( home_url( '/foro/#hilo-veleta' ) ); ?>">Recomendaciones de equipo pa el Veleta en otoño</a>
-							<span class="forum-meta">15 respuestas · Laura</span>
-						</div>
-					</li>
+					<?php if ( $foros_preview ) : ?>
+						<?php foreach ( $foros_preview as $foro ) : ?>
+							<li class="forum-thread">
+								<span class="avatar"><?php echo esc_html( mb_substr( $foro->name, 0, 1 ) ); ?></span>
+								<div>
+									<a href="<?php echo esc_url( $asgarosforum->get_link( 'forum', $foro->id ) ); ?>"><?php echo esc_html( $foro->name ); ?></a>
+									<span class="forum-meta"><?php echo esc_html( $asgarosforum->get_forum_topic_counter( $foro->id ) ); ?> temas · <?php echo esc_html( $foro->description ); ?></span>
+								</div>
+							</li>
+						<?php endforeach; ?>
+					<?php else : ?>
+						<li class="forum-thread">
+							<div>
+								<a href="<?php echo esc_url( home_url( '/foro/' ) ); ?>">El foro se está preparando, ¡pásate a echar un vistazo!</a>
+							</div>
+						</li>
+					<?php endif; ?>
 				</ul>
 				<a href="<?php echo esc_url( home_url( '/foro/' ) ); ?>" class="btn-outline-dark">Ir al foro</a>
 			</aside>
