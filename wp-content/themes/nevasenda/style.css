@@ -115,7 +115,7 @@ h3 { font-size: 1.4rem; }
   border-bottom-color: var(--c-gray-300);
 }
 
-/* Portada: nav transparente integrado sobre el hero hasta hacer scroll */
+/* Portada: nav transparente sobre el hero, fondo negro sólido al hacer scroll */
 .home .site-header {
   position: absolute;
   top: 0;
@@ -127,18 +127,22 @@ h3 { font-size: 1.4rem; }
 }
 .home .site-header.is-scrolled {
   position: fixed;
+  background: var(--c-black);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom-color: rgba(255, 255, 255, .08);
 }
-.home .site-header:not(.is-scrolled) .site-branding a,
-.home .site-header:not(.is-scrolled) .primary-menu a {
+.home .site-header .site-branding a,
+.home .site-header .primary-menu a {
   color: var(--c-white);
 }
-.home .site-header:not(.is-scrolled) .primary-menu a::after {
-  background: var(--c-white);
+.home .site-header .primary-menu a::after {
+  display: none;
 }
-.home .site-header:not(.is-scrolled) .menu-toggle {
+.home .site-header .menu-toggle {
   border-color: rgba(255, 255, 255, .7);
 }
-.home .site-header:not(.is-scrolled) .menu-toggle span {
+.home .site-header .menu-toggle span {
   background: var(--c-white);
 }
 
@@ -226,6 +230,13 @@ h3 { font-size: 1.4rem; }
   .primary-menu.is-open { display: flex; }
   .primary-menu li { border-bottom: 1px solid var(--c-gray-100); }
   .primary-menu a { display: block; padding: 14px 24px; }
+  .home .site-header .primary-menu.is-open {
+    background: var(--c-black);
+    border-color: rgba(255, 255, 255, .08);
+  }
+  .home .site-header .primary-menu li {
+    border-bottom-color: rgba(255, 255, 255, .08);
+  }
 }
 
 /* ==========================================================================

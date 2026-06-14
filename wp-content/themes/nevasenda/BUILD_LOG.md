@@ -60,6 +60,11 @@ Sitio WP local: `Local Sites/senderismo/app/public`. Tema custom clásico (sin c
 - **Footer**: bloque `.footer-social` con iconos SVG inline (Instagram/Facebook/YouTube, enlaces placeholder `#`).
 - `assets/animations.js`: añadido contador animado (`[data-counter]`, ease-out con `requestAnimationFrame`) y observer de scrollytelling; ambos respetan `prefers-reduced-motion`.
 
+## Paso 8 — Ajustes nav transparente + nueva foto hero
+- **Nav portada**: fondo negro sólido (`var(--c-black)`) al hacer scroll en vez de blanco difuminado; texto/branding/toggle blancos tanto sobre el hero como con fondo negro. Menú móvil (`.primary-menu.is-open`) también pasa a negro en portada.
+- Quitado el subrayado `::after` del nav en portada (causaba líneas blancas raras bajo "Inicio" y "Comunidad" porque ambos quedaban marcados como `current-menu-item`).
+- **Hero**: nueva foto `hero-bg.jpg` (2560x1504, picos nevados con alpenglow al amanecer, Unsplash).
+
 ## Pendiente (próximos pasos)
 - Activar tema "Nevasenda" en Apariencia.
 - Crear menú "Menú principal" en Apariencia > Menús y asignarlo a `primary` (Inicio, Rutas, Blog, Material, Galería, Sobre nosotros, Contacto). Ajustes > Lectura: página de entradas = "Blog".
