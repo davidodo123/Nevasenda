@@ -212,26 +212,26 @@ wp_reset_postdata();
 					<li class="forum-thread">
 						<span class="avatar">M</span>
 						<div>
-							<a href="#">¿Cuándo es la mejor época pa el Circo de Gredos?</a>
+							<a href="<?php echo esc_url( home_url( '/foro/#hilo-gredos' ) ); ?>">¿Cuándo es la mejor época pa el Circo de Gredos?</a>
 							<span class="forum-meta">12 respuestas · Marta</span>
 						</div>
 					</li>
 					<li class="forum-thread">
 						<span class="avatar">J</span>
 						<div>
-							<a href="#">Estado del sendero a los Órganos tras las lluvias</a>
+							<a href="<?php echo esc_url( home_url( '/foro/#hilo-organos' ) ); ?>">Estado del sendero a los Órganos tras las lluvias</a>
 							<span class="forum-meta">8 respuestas · Javi</span>
 						</div>
 					</li>
 					<li class="forum-thread">
 						<span class="avatar">L</span>
 						<div>
-							<a href="#">Recomendaciones de equipo pa el Veleta en otoño</a>
+							<a href="<?php echo esc_url( home_url( '/foro/#hilo-veleta' ) ); ?>">Recomendaciones de equipo pa el Veleta en otoño</a>
 							<span class="forum-meta">15 respuestas · Laura</span>
 						</div>
 					</li>
 				</ul>
-				<a href="#" class="btn-outline-dark">Ir al foro</a>
+				<a href="<?php echo esc_url( home_url( '/foro/' ) ); ?>" class="btn-outline-dark">Ir al foro</a>
 			</aside>
 		</div>
 	</div>

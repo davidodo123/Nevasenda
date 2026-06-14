@@ -268,9 +268,7 @@ h3 { font-size: 1.4rem; }
   position: absolute;
   inset: 0;
   z-index: -1;
-  background:
-    linear-gradient(180deg, rgba(24, 24, 24, .35) 0%, rgba(24, 24, 24, .8) 100%),
-    radial-gradient(circle at 80% 0%, rgba(var(--c-blue-rgb), .45), transparent 55%);
+  background: linear-gradient(180deg, rgba(24, 24, 24, .55) 0%, rgba(24, 24, 24, .35) 45%, rgba(24, 24, 24, .65) 100%);
 }
 .hero::after {
   content: '';
@@ -719,6 +717,8 @@ h3 { font-size: 1.4rem; }
   padding: 24px;
 }
 .forum-preview h3 { margin-bottom: 16px; }
+.forum-category { margin-bottom: 24px; }
+.forum-category:last-child { margin-bottom: 0; }
 .forum-threads {
   list-style: none;
   margin: 0 0 20px;

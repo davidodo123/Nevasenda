@@ -63,7 +63,7 @@ Sitio WP local: `Local Sites/senderismo/app/public`. Tema custom clásico (sin c
 ## Paso 8 — Ajustes nav transparente + nueva foto hero
 - **Nav portada**: fondo negro sólido (`var(--c-black)`) al hacer scroll en vez de blanco difuminado; texto/branding/toggle blancos tanto sobre el hero como con fondo negro. Menú móvil (`.primary-menu.is-open`) también pasa a negro en portada.
 - Quitado el subrayado `::after` del nav en portada (causaba líneas blancas raras bajo "Inicio" y "Comunidad" porque ambos quedaban marcados como `current-menu-item`).
-- **Hero**: nueva foto `hero-bg.jpg` (2560x1504, picos nevados con alpenglow al amanecer, Unsplash).
+- **Hero**: nueva foto `hero-bg.jpg` (2560x1705, vista de Sierra Nevada nevada desde la Alhambra, Granada — Unsplash).
 
 ## Hecho (ya no pendiente)
 - ✅ Tema activado, menú principal asignado a `primary` (Inicio, Rutas, Galería, Comunidad, Blog) vía `wp-content/mu-plugins/nevasenda-menu-fix.php` (one-shot, se puede borrar ya que cumplió su función).
