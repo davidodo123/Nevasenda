@@ -65,10 +65,13 @@ Sitio WP local: `Local Sites/senderismo/app/public`. Tema custom clásico (sin c
 - Quitado el subrayado `::after` del nav en portada (causaba líneas blancas raras bajo "Inicio" y "Comunidad" porque ambos quedaban marcados como `current-menu-item`).
 - **Hero**: nueva foto `hero-bg.jpg` (2560x1504, picos nevados con alpenglow al amanecer, Unsplash).
 
+## Hecho (ya no pendiente)
+- ✅ Tema activado, menú principal asignado a `primary` (Inicio, Rutas, Galería, Comunidad, Blog) vía `wp-content/mu-plugins/nevasenda-menu-fix.php` (one-shot, se puede borrar ya que cumplió su función).
+- ✅ Taxonomías y contenido demo importados (`nevasenda-demo-content.php`).
+- ✅ Galería con 14 fotos + página `/galeria/`.
+
 ## Pendiente (próximos pasos)
-- Activar tema "Nevasenda" en Apariencia.
-- Crear menú "Menú principal" en Apariencia > Menús y asignarlo a `primary` (Inicio, Rutas, Blog, Material, Galería, Sobre nosotros, Contacto). Ajustes > Lectura: página de entradas = "Blog".
-- Crear páginas: Sobre nosotros, Contacto (form con plugin, ej. Contact Form 7), Material/Galería.
-- Crear términos de taxonomía: Dificultad (Fácil/Media/Difícil), Zona (por comarca/región).
-- Añadir contenido de prueba (2-3 rutas, 2-3 posts) pa ver diseño con datos reales.
+- Crear páginas: Sobre nosotros, Contacto (form con plugin, ej. Contact Form 7).
+- Foro real (de momento solo preview visual `.forum-preview` con hilos de ejemplo en home).
 - Logo real (de momento texto "Nevasenda").
+- Borrar `wp-content/mu-plugins/nevasenda-menu-fix.php` una vez confirmado el menú en Apariencia > Menús.
