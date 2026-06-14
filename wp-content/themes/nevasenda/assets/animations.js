@@ -12,7 +12,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
 
 	// Scroll-reveal con stagger automático
 	var targets = document.querySelectorAll(
-		'.cards-grid .card, .section-title, .section-subtitle, .ruta-datos .dato'
+		'.cards-grid .card, .news-cards .card, .forum-preview, .section-title, .section-subtitle, .ruta-datos .dato'
 	);
 
 	if ( ! targets.length ) {
