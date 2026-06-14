@@ -1,0 +1,539 @@
+/*
+Theme Name: Nevasenda
+Theme URI: https://nevasenda.local
+Author: David
+Description: Tema custom pa web de senderismo. Diseño limpio en blanco, negro y azul. CPT "Rutas" con datos técnicos (distancia, desnivel, duración) y taxonomías Dificultad/Zona.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.6
+Requires PHP: 7.4
+License: GPL v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: nevasenda
+*/
+
+/* ==========================================================================
+   1. Variables y reset
+   ========================================================================== */
+:root {
+  --c-white: #ffffff;
+  --c-black: #181818;
+  --c-blue: #1565c0;
+  --c-blue-dark: #0d47a1;
+  --c-blue-rgb: 21, 101, 192;
+  --c-gray-100: #f4f5f6;
+  --c-gray-300: #d9dcdf;
+  --c-gray-600: #6b7280;
+  --font-base: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-heading: 'Space Grotesk', var(--font-base);
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --shadow-md: 0 10px 30px -10px rgba(0, 0, 0, .15);
+  --shadow-blue: 0 12px 30px -10px rgba(var(--c-blue-rgb), .5);
+  --container-w: 1180px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-base);
+  color: var(--c-black);
+  background: var(--c-white);
+  line-height: 1.6;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: var(--c-blue); text-decoration: none; transition: color .15s ease; }
+a:hover { color: var(--c-blue-dark); }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  line-height: 1.15;
+  margin: 0 0 .5em;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+h1 { font-size: clamp(2.4rem, 5vw, 3.6rem); }
+h2 { font-size: clamp(1.8rem, 3.5vw, 2.4rem); }
+h3 { font-size: 1.4rem; }
+
+.container {
+  max-width: var(--container-w);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.btn {
+  display: inline-block;
+  padding: .75em 1.6em;
+  background: var(--c-blue);
+  color: var(--c-white);
+  border-radius: 4px;
+  font-weight: 600;
+  border: 2px solid var(--c-blue);
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s ease, border-color .25s ease;
+}
+.btn:hover {
+  background: var(--c-blue-dark);
+  border-color: var(--c-blue-dark);
+  color: var(--c-white);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-blue);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--c-white);
+  border: 2px solid var(--c-white);
+}
+.btn-outline:hover {
+  background: var(--c-white);
+  color: var(--c-black);
+  box-shadow: 0 12px 30px -10px rgba(255, 255, 255, .35);
+}
+
+/* ==========================================================================
+   2. Header / Navegación
+   ========================================================================== */
+.site-header {
+  border-bottom: 1px solid transparent;
+  position: sticky;
+  top: 0;
+  background: var(--c-white);
+  z-index: 100;
+  transition: background-color .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease), backdrop-filter .3s var(--ease);
+}
+.site-header.is-scrolled {
+  background: rgba(255, 255, 255, .85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, .06);
+  border-bottom-color: var(--c-gray-300);
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.site-branding a {
+  color: var(--c-black);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: .5px;
+  text-decoration: none;
+}
+.site-branding span { color: var(--c-blue); }
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: 2px solid var(--c-black);
+  border-radius: 4px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+.menu-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--c-black);
+  margin: 4px 0;
+}
+
+.primary-menu {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.primary-menu a {
+  position: relative;
+  color: var(--c-black);
+  font-weight: 600;
+  font-size: .95rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.primary-menu a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: var(--c-blue);
+  transition: width .3s var(--ease);
+}
+.primary-menu a:hover,
+.primary-menu .current-menu-item > a {
+  color: var(--c-blue);
+}
+.primary-menu a:hover::after,
+.primary-menu .current-menu-item > a::after {
+  width: 100%;
+}
+
+@media (max-width: 860px) {
+  .menu-toggle { display: block; }
+  .primary-menu {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--c-white);
+    border-top: 1px solid var(--c-gray-300);
+    border-bottom: 1px solid var(--c-gray-300);
+  }
+  .primary-menu.is-open { display: flex; }
+  .primary-menu li { border-bottom: 1px solid var(--c-gray-100); }
+  .primary-menu a { display: block; padding: 14px 24px; }
+}
+
+/* ==========================================================================
+   3. Hero
+   ========================================================================== */
+.hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--c-black);
+  color: var(--c-white);
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  padding: 120px 0;
+  text-align: center;
+}
+.hero-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 130%;
+  object-fit: cover;
+  z-index: -2;
+  will-change: transform;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(24, 24, 24, .35) 0%, rgba(24, 24, 24, .8) 100%),
+    radial-gradient(circle at 80% 0%, rgba(var(--c-blue-rgb), .45), transparent 55%);
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  filter: blur(90px);
+  z-index: -1;
+  background: radial-gradient(circle, rgba(var(--c-blue-rgb), .35), transparent 70%);
+  bottom: -200px;
+  left: -140px;
+  mix-blend-mode: screen;
+  animation: blob-float 16s ease-in-out infinite;
+}
+.hero h1,
+.hero p,
+.hero .btn {
+  position: relative;
+  opacity: 0;
+  animation: fade-up .8s var(--ease) forwards;
+}
+.hero h1 { color: var(--c-white); animation-delay: .05s; }
+.hero h1 span { color: var(--c-blue); }
+.hero p {
+  max-width: 640px;
+  margin: 0 auto 28px;
+  color: var(--c-gray-300);
+  font-size: 1.15rem;
+  animation-delay: .2s;
+}
+.hero .btn { animation-delay: .35s; }
+
+/* ==========================================================================
+   4. Secciones generales
+   ========================================================================== */
+.section { padding: 70px 0; }
+.section-title {
+  text-align: center;
+  margin-bottom: 12px;
+}
+.section-subtitle {
+  text-align: center;
+  color: var(--c-gray-600);
+  margin-bottom: 40px;
+}
+.section-alt { background: var(--c-gray-100); }
+
+/* ==========================================================================
+   5. Tarjetas (rutas / posts)
+   ========================================================================== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+}
+
+.card {
+  border: 1px solid var(--c-gray-300);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--c-white);
+  display: flex;
+  flex-direction: column;
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s var(--ease);
+}
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-md);
+  border-color: transparent;
+}
+.card-img { aspect-ratio: 4/3; overflow: hidden; background: var(--c-gray-300); }
+.card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
+.card:hover .card-img img { transform: scale(1.08); }
+.card-body { padding: 18px 20px; flex: 1; display: flex; flex-direction: column; }
+.card-body h3 { margin-bottom: 8px; }
+.card-body h3 a { color: var(--c-black); }
+.card-body h3 a:hover { color: var(--c-blue); }
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+.badge {
+  display: inline-block;
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  padding: 4px 10px;
+  border-radius: 3px;
+  background: var(--c-gray-100);
+  color: var(--c-black);
+  border: 1px solid var(--c-gray-300);
+}
+.badge-blue { background: var(--c-blue); color: var(--c-white); border-color: var(--c-blue); }
+.card-excerpt { color: var(--c-gray-600); font-size: .95rem; flex: 1; }
+.card-link { margin-top: 14px; font-weight: 700; }
+
+/* ==========================================================================
+   6. Ficha de ruta (single-ruta)
+   ========================================================================== */
+.ruta-hero img { width: 100%; max-height: 460px; object-fit: cover; border-radius: 6px; }
+.ruta-datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin: 30px 0;
+  padding: 24px;
+  background: var(--c-gray-100);
+  border-radius: 6px;
+  text-align: center;
+}
+.ruta-datos .dato strong {
+  display: block;
+  font-size: 1.4rem;
+  color: var(--c-blue);
+}
+.ruta-datos .dato span {
+  font-size: .85rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--c-gray-600);
+}
+.ruta-content { max-width: 760px; margin: 0 auto; }
+
+/* ==========================================================================
+   7. Contenido genérico (page / single post)
+   ========================================================================== */
+.entry-content { max-width: 760px; margin: 0 auto; }
+.entry-title { text-align: center; margin-bottom: 30px; }
+
+/* ==========================================================================
+   8b. Secciones con foto de fondo + degradado
+   ========================================================================== */
+.photo-section {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  color: var(--c-white);
+}
+.photo-section-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 130%;
+  object-fit: cover;
+  z-index: -2;
+  will-change: transform;
+}
+.photo-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.photo-section--left::before {
+  background: linear-gradient(90deg, rgba(24, 24, 24, .88) 0%, rgba(24, 24, 24, .35) 70%);
+}
+.photo-section--right::before {
+  background: linear-gradient(270deg, rgba(24, 24, 24, .88) 0%, rgba(24, 24, 24, .35) 70%);
+}
+.photo-section-content {
+  max-width: 480px;
+  padding: 60px 0;
+}
+.photo-section--right .photo-section-content { margin-left: auto; text-align: right; }
+.photo-section h2 { color: var(--c-white); }
+.photo-section p { color: var(--c-gray-300); font-size: 1.05rem; }
+
+/* ==========================================================================
+   8c. Galería (grid + lightbox)
+   ========================================================================== */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 220px;
+  gap: 14px;
+}
+.gallery-grid a {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 6px;
+}
+.gallery-grid a:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+.gallery-grid a:nth-child(6) { grid-column: span 2; }
+
+.gallery-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .6s var(--ease);
+}
+.gallery-grid a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, .55));
+  opacity: 0;
+  transition: opacity .4s var(--ease);
+}
+.gallery-grid a:hover img { transform: scale(1.08); }
+.gallery-grid a:hover::after { opacity: 1; }
+
+@media (max-width: 760px) {
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 160px; }
+  .gallery-grid a:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+  .gallery-grid a:nth-child(6) { grid-column: span 1; }
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(24, 24, 24, .92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s var(--ease), visibility .3s var(--ease);
+}
+.lightbox.is-open { opacity: 1; visibility: visible; }
+.lightbox img {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: 6px;
+  box-shadow: var(--shadow-md);
+  transform: scale(.94);
+  transition: transform .3s var(--ease);
+}
+.lightbox.is-open img { transform: scale(1); }
+.lightbox-close {
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  color: var(--c-white);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* ==========================================================================
+   8. Footer
+   ========================================================================== */
+.site-footer {
+  background: var(--c-black);
+  color: var(--c-gray-300);
+  padding: 50px 0 24px;
+  margin-top: 60px;
+}
+.site-footer .container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 30px;
+}
+.site-footer h4 { color: var(--c-white); }
+.footer-menu { list-style: none; margin: 0; padding: 0; }
+.footer-menu a { color: var(--c-gray-300); }
+.footer-menu a:hover { color: var(--c-blue); }
+.site-footer .copy {
+  width: 100%;
+  text-align: center;
+  border-top: 1px solid #333;
+  margin-top: 30px;
+  padding-top: 20px;
+  font-size: .85rem;
+  color: var(--c-gray-600);
+}
+
+/* ==========================================================================
+   9. Animaciones / scroll-reveal
+   ========================================================================== */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blob-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(-40px, 30px) scale(1.1); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+  transition-delay: calc(var(--reveal-i, 0) * .08s);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero h1, .hero p, .hero .btn, .reveal { animation: none !important; opacity: 1 !important; transform: none !important; transition: none !important; }
+  .hero::before, .hero::after { animation: none !important; }
+}
