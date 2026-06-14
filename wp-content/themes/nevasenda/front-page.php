@@ -166,7 +166,7 @@ wp_reset_postdata();
 	</div>
 </section>
 
-<section class="section">
+<section class="section" id="comunidad">
 	<div class="container">
 		<h2 class="section-title">Comunidad y noticias</h2>
 		<p class="section-subtitle">Lo último del blog y lo que se cuece en el foro</p>
