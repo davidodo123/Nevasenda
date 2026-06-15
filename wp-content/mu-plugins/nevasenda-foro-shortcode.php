@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Nevasenda - Shortcode del foro
- * Description: Pone el shortcode [asgarosforum] como contenido de la página "Foro". Visita /wp-admin/?nevasenda_foro_shortcode=1 logueado como admin.
+ * Description: Pone el shortcode [forum] como contenido de la página "Foro". Visita /wp-admin/?nevasenda_foro_shortcode=1 logueado como admin.
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -20,7 +20,7 @@ add_action( 'admin_init', function () {
 
 	wp_update_post( array(
 		'ID'           => $page->ID,
-		'post_content' => '[asgarosforum]',
+		'post_content' => '[forum]',
 	) );
 
 	wp_die( 'Hecho. <a href="' . esc_url( home_url( '/foro/' ) ) . '">Ver foro</a>.' );
