@@ -642,91 +642,171 @@ h3 { font-size: 1.4rem; }
 /* ==========================================================================
    6. Ficha de ruta (single-ruta)
    ========================================================================== */
-.ruta-hero img { width: 100%; max-height: 460px; object-fit: cover; border-radius: 6px; }
-.ruta-datos {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
-  margin: 30px 0;
-  padding: 24px;
-  background: var(--c-gray-100);
-  border-radius: 6px;
-  text-align: center;
+.ruta-hero { border-radius: 16px; overflow: hidden; }
+.ruta-hero img { width: 100%; max-height: 460px; object-fit: cover; display: block; }
+.ruta-content { max-width: 760px; margin: 0 auto; font-size: 1.05rem; line-height: 1.75; color: var(--c-gray-600); }
+
+/* Barra de estadísticas: distancia, desnivel, duración, encuentro, hora */
+.ruta-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  background: var(--c-white);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  padding: 8px;
+  margin: 0 0 40px;
+  position: relative;
+  z-index: 2;
 }
-.ruta-datos .dato strong {
+.ruta-stats--float { margin-top: -40px; }
+.ruta-stats:not(.ruta-stats--float) { background: var(--c-gray-100); box-shadow: none; margin-top: 30px; }
+.ruta-stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 160px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  transition: background .15s ease, transform .15s ease;
+}
+.ruta-stats--float .ruta-stat:hover { background: var(--c-gray-100); transform: translateY(-2px); }
+.ruta-stat svg { width: 26px; height: 26px; fill: var(--c-blue); flex-shrink: 0; }
+.ruta-stat strong {
   display: block;
-  font-size: 1.4rem;
-  color: var(--c-blue);
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--c-black);
+  line-height: 1.3;
 }
-.ruta-datos .dato span {
-  font-size: .85rem;
+.ruta-stat span {
+  font-size: .75rem;
   text-transform: uppercase;
   letter-spacing: .5px;
   color: var(--c-gray-600);
 }
-.ruta-content { max-width: 760px; margin: 0 auto; }
+@media (max-width: 760px) {
+  .ruta-stats--float { margin-top: -24px; }
+}
 
-/* Mapa Wikiloc + requisitos */
+/* Mapa GPX/Wikiloc + requisitos */
 .ruta-extra {
   max-width: 1000px;
   margin: 48px auto 0;
-  display: grid;
-  grid-template-columns: 1.6fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 32px;
 }
-@media (max-width: 760px) {
-  .ruta-extra { grid-template-columns: 1fr; }
+.ruta-card {
+  background: var(--c-white);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  padding: 24px;
 }
-.ruta-extra h2 {
-  font-size: 1.3rem;
+.ruta-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-bottom: 16px;
 }
-.ruta-map-placeholder {
+.ruta-card__head h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.25rem;
+  margin: 0;
+}
+.ruta-card__head h2 svg { width: 22px; height: 22px; fill: var(--c-blue); }
+.ruta-leaflet-map {
+  height: 420px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--c-gray-100);
+}
+.ruta-etapas-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.ruta-etapa-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--c-gray-100);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: .85rem;
+  font-weight: 500;
+}
+.ruta-etapa-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ruta-map-cta {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   gap: 16px;
-  background: var(--c-gray-100);
+  background: linear-gradient(135deg, var(--c-blue), var(--c-blue-dark));
   border-radius: 12px;
-  padding: 48px 24px;
-  margin-bottom: 16px;
+  padding: 56px 24px;
+  box-shadow: var(--shadow-blue);
 }
-.ruta-map-placeholder svg {
+.ruta-map-cta svg {
   width: 48px;
   height: 48px;
-  fill: var(--c-blue);
+  fill: var(--c-white);
 }
-.ruta-map-placeholder p {
-  color: var(--c-gray-600);
+.ruta-map-cta h3 {
+  color: var(--c-white);
+  margin: 0;
+}
+.ruta-map-cta p {
+  color: rgba(255, 255, 255, .8);
   max-width: 360px;
+  margin: 0;
 }
 .ruta-wikiloc-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--c-blue);
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(var(--c-blue-rgb), .08);
+  transition: background .15s ease, color .15s ease;
 }
-.ruta-wikiloc-btn svg { width: 16px; height: 16px; }
-.ruta-requisitos {
-  background: var(--c-gray-100);
-  border-radius: 12px;
-  padding: 24px;
-}
-.ruta-requisitos ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-.ruta-requisitos li {
+.ruta-wikiloc-btn:hover { background: var(--c-blue); color: var(--c-white); }
+.ruta-wikiloc-btn svg { width: 14px; height: 14px; }
+.ruta-cta-btn svg { width: 16px; height: 16px; }
+.ruta-requisitos-grid {
   display: flex;
-  align-items: flex-start;
+  flex-wrap: wrap;
   gap: 10px;
-  font-size: .95rem;
 }
-.ruta-requisitos li svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  fill: var(--c-blue);
-  margin-top: 2px;
+.ruta-req-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--c-gray-100);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: .9rem;
+  font-weight: 500;
+  transition: background .15s ease, transform .15s ease;
 }
+.ruta-req-chip:hover { background: rgba(var(--c-blue-rgb), .08); transform: translateY(-2px); }
+.ruta-req-chip svg { width: 16px; height: 16px; fill: var(--c-blue); flex-shrink: 0; }
 
 /* ==========================================================================
    7. Contenido genérico (page / single post)
@@ -895,55 +975,55 @@ h3 { font-size: 1.4rem; }
 }
 
 /* ==========================================================================
-   8e. Scrollytelling
+   8e. Features (rutas, datos, comunidad, fotografía)
    ========================================================================== */
-.scrolly-grid {
+.features-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: start;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 48px;
+  align-items: center;
 }
-.scrolly-media {
-  position: sticky;
-  top: 110px;
+.features-media {
   aspect-ratio: 4/5;
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--shadow-md);
 }
-.scrolly-media img { width: 100%; height: 100%; object-fit: cover; }
-.scrolly-items {
+.features-media img { width: 100%; height: 100%; object-fit: cover; }
+.features-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.feature-card {
+  background: var(--c-white);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  padding: 28px 24px;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-blue);
+}
+.feature-icon {
   display: flex;
-  flex-direction: column;
-  gap: 90px;
-  padding: 6vh 0;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(var(--c-blue-rgb), .1);
+  margin-bottom: 16px;
 }
-.scrolly-item {
-  opacity: .35;
-  padding-left: 24px;
-  border-left: 3px solid var(--c-gray-300);
-  transition: opacity .4s var(--ease), border-color .4s var(--ease);
-}
-.scrolly-item.is-active {
-  opacity: 1;
-  border-left-color: var(--c-amber);
-}
-.scrolly-num {
-  display: block;
-  font-family: var(--font-heading);
-  font-weight: 700;
-  color: var(--c-blue);
-  font-size: .9rem;
-  letter-spacing: 2px;
-  margin-bottom: 6px;
-}
-.scrolly-item p { color: var(--c-gray-600); }
+.feature-icon svg { width: 24px; height: 24px; fill: var(--c-blue); }
+.feature-card h3 { font-size: 1.05rem; margin: 0 0 8px; }
+.feature-card p { color: var(--c-gray-600); font-size: .92rem; margin: 0; }
 
 @media (max-width: 860px) {
-  .scrolly-grid { grid-template-columns: 1fr; gap: 30px; }
-  .scrolly-media { position: relative; top: 0; aspect-ratio: 16/9; }
-  .scrolly-items { padding: 0; gap: 32px; }
-  .scrolly-item { opacity: 1; }
+  .features-grid { grid-template-columns: 1fr; gap: 30px; }
+  .features-media { aspect-ratio: 16/9; }
+  .features-list { grid-template-columns: 1fr; }
 }
 
 /* ==========================================================================
@@ -1168,5 +1248,4 @@ h3 { font-size: 1.4rem; }
   .hero-scroll { display: none; }
   .hero-scroll span { animation: none !important; }
   .marquee-track { animation: none !important; }
-  .scrolly-item { opacity: 1 !important; }
 }

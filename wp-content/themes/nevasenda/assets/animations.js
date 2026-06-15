@@ -131,25 +131,4 @@ document.addEventListener( 'DOMContentLoaded', function () {
 			counters.forEach( function ( el ) { counterObserver.observe( el ); } );
 		}
 	}
-
-	// Scrollytelling: resalta el bloque activo según el scroll
-	var scrollyItems = document.querySelectorAll( '.scrolly-item' );
-	if ( scrollyItems.length ) {
-		if ( ! ( 'IntersectionObserver' in window ) ) {
-			scrollyItems.forEach( function ( el ) { el.classList.add( 'is-active' ); } );
-		} else {
-			scrollyItems[ 0 ].classList.add( 'is-active' );
-
-			var scrollyObserver = new IntersectionObserver( function ( entries ) {
-				entries.forEach( function ( entry ) {
-					if ( entry.isIntersecting ) {
-						scrollyItems.forEach( function ( el ) { el.classList.remove( 'is-active' ); } );
-						entry.target.classList.add( 'is-active' );
-					}
-				} );
-			}, { threshold: 0.6 } );
-
-			scrollyItems.forEach( function ( el ) { scrollyObserver.observe( el ); } );
-		}
-	}
 } );

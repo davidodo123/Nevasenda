@@ -137,29 +137,29 @@ if ( ! empty( $asgarosforum ) ) {
 	</div>
 </section>
 
-<section class="section section-alt scrolly">
-	<div class="container scrolly-grid">
-		<div class="scrolly-media">
+<section class="section section-alt">
+	<div class="container features-grid">
+		<div class="features-media">
 			<img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/scrolly.jpg' ); ?>" alt="Senderista contemplando un valle de montaña" loading="lazy">
 		</div>
-		<div class="scrolly-items">
-			<div class="scrolly-item">
-				<span class="scrolly-num">01</span>
+		<div class="features-list">
+			<div class="feature-card">
+				<div class="feature-icon"><?php echo nevasenda_icon( 'terrain' ); ?></div>
 				<h3>Rutas para todos los niveles</h3>
 				<p>Filtra por dificultad (fácil, media o difícil) y zona pa encontrar la salida que mejor se adapta a tu forma física y a tu grupo.</p>
 			</div>
-			<div class="scrolly-item">
-				<span class="scrolly-num">02</span>
+			<div class="feature-card">
+				<div class="feature-icon"><?php echo nevasenda_icon( 'ruler' ); ?></div>
 				<h3>Datos técnicos reales</h3>
 				<p>Cada ficha incluye distancia, desnivel acumulado y duración estimada, pa que sepas exactamente a qué te enfrentas antes de salir.</p>
 			</div>
-			<div class="scrolly-item">
-				<span class="scrolly-num">03</span>
+			<div class="feature-card">
+				<div class="feature-icon"><?php echo nevasenda_icon( 'users' ); ?></div>
 				<h3>Comunidad activa</h3>
 				<p>Comparte tu experiencia, haz preguntas sobre el estado de un sendero y descubre recomendaciones de otros senderistas.</p>
 			</div>
-			<div class="scrolly-item">
-				<span class="scrolly-num">04</span>
+			<div class="feature-card">
+				<div class="feature-icon"><?php echo nevasenda_icon( 'camera' ); ?></div>
 				<h3>Fotografía de cada ruta</h3>
 				<p>Paisajes reales de cada recorrido, pa que veas con qué te vas a encontrar antes de calzarte las botas.</p>
 			</div>
@@ -249,8 +249,8 @@ if ( ! empty( $asgarosforum ) ) {
 	<img class="photo-section-bg" src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/section-2.jpg' ); ?>" alt="">
 	<div class="container">
 		<div class="photo-section-content">
-			<h2>Comparte tu aventura</h2>
-			<p>Sube tus fotos, cuenta cómo fue tu ruta y descubre las experiencias de otros senderistas. Una comunidad pa quienes disfrutan caminar, sea cual sea su nivel.</p>
+			<h2>Inspírate pa tu próxima ruta</h2>
+			<p>Paisajes, cumbres y rincones de montaña capturados en nuestras rutas. Una comunidad pa quienes disfrutan caminar, sea cual sea su nivel.</p>
 			<a href="<?php echo esc_url( home_url( '/galeria/' ) ); ?>" class="btn btn-outline">Ver galería</a>
 		</div>
 	</div>
@@ -262,11 +262,11 @@ if ( ! empty( $asgarosforum ) ) {
 		<p class="section-subtitle">Un vistazo a los paisajes que te esperan</p>
 
 		<div class="gallery-grid">
-			<?php for ( $i = 1; $i <= 14; $i++ ) : ?>
-				<a href="<?php echo esc_url( get_template_directory_uri() . '/assets/images/gallery-' . $i . '.jpg' ); ?>">
-					<img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/gallery-' . $i . '.jpg' ); ?>" alt="Foto de senderismo <?php echo esc_attr( $i ); ?>" loading="lazy">
+			<?php foreach ( nevasenda_galeria_fotos( 14 ) as $foto ) : ?>
+				<a href="<?php echo esc_url( $foto['full'] ); ?>">
+					<img src="<?php echo esc_url( $foto['thumb'] ); ?>" alt="<?php echo esc_attr( $foto['alt'] ); ?>" loading="lazy">
 				</a>
-			<?php endfor; ?>
+			<?php endforeach; ?>
 		</div>
 
 		<div class="gallery-cta">

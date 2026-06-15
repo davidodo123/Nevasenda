@@ -96,6 +96,36 @@ Sitio WP local: `Local Sites/senderismo/app/public`. Tema custom clásico (sin c
   - Toda la sección se oculta si la ruta no tiene ni Wikiloc ni requisitos rellenados.
 - Pa probarlo: editar una Ruta existente, rellenar "Enlace a Wikiloc" (ej. `https://es.wikiloc.com/rutas-senderismo/xxxxx-123456789`) y/o "Requisitos / material recomendado", guardar.
 
+## Paso 13 — Wikiloc sin iframe (CSP), datos prácticos y botón de relleno aleatorio
+- **Wikiloc no se puede embeber**: comprobado con curl que `spatialArtifactWidget.do` envía `Content-Security-Policy: frame-ancestors 'self' https://*.wikiloc.com;` — bloqueo del lado de Wikiloc, ningún sitio externo puede meterlo en un iframe. Se quita el intento de iframe (y el helper `nevasenda_wikiloc_id()`).
+- **`.ruta-map-cta`**: la sección "Mapa de la ruta" ahora es una tarjeta con degradado azul, icono de pin grande, texto y botón `btn-outline` "Ver track completo en Wikiloc" (abre en pestaña nueva).
+- **Datos técnicos (`_ruta_punto_encuentro`, `_ruta_hora_salida`)**: 2 campos nuevos en el metabox "Datos técnicos". `.ruta-datos` vuelve a ser solo distancia/desnivel/duración (3 columnas limpias); punto de encuentro y hora de salida se muestran debajo en una barra `.ruta-meeting` (icono pin / icono reloj + texto), no como "dato" numérico grande.
+- **Botón "Rellenar con datos de ejemplo"**: en el metabox, debajo de Requisitos. JS inline rellena punto de encuentro, hora de salida y 4-6 requisitos aleatorios desde listas predefinidas (no guarda solo, hay que pulsar Actualizar).
+- Pa probarlo: editar una Ruta, pulsar "Rellenar con datos de ejemplo" (o rellenar a mano), guardar, ver ficha.
+
+## Paso 14 — Mapa real con track GPX (Leaflet)
+- Nuevo campo en metabox "Datos técnicos": **Track GPX** — botón "Seleccionar GPX" abre el selector de medios de WP (`wp.media`), guarda la URL del archivo en `_ruta_gpx`. Filtro `upload_mimes` añade `.gpx` (`application/gpx+xml`) a los tipos permitidos en la mediateca.
+- `single-ruta.php`: si la ruta tiene GPX, "Mapa de la ruta" muestra un mapa **Leaflet + OpenStreetMap real** (`#ruta-leaflet-map`, 420px), con el track dibujado y el mapa centrado/ajustado automáticamente (`fitBounds`). Debajo, botón "Ver ruta en Wikiloc" si también hay enlace.
+- Si no hay GPX pero sí Wikiloc: se mantiene la tarjeta `.ruta-map-cta` (degradado azul + botón) del Paso 13.
+- Librerías cargadas solo en fichas de ruta con GPX (`is_singular('ruta')` + meta `_ruta_gpx`), vía CDN: `leaflet@1.9.4` + `leaflet-gpx@2.1.2`. Sin API key, sin coste.
+- Pa probarlo: descargar el `.gpx` de la ruta desde Wikiloc (botón "Descargar" en la página de la ruta, requiere cuenta), editar la Ruta en wp-admin, "Seleccionar GPX" → subir el archivo, guardar, recargar ficha.
+- **Fix**: `.gpx` se rechazaba al subir aunque `upload_mimes` lo permitiera, porque `wp_check_filetype_and_ext()` detecta el tipo real (finfo) como `application/xml`, no `application/gpx+xml`. Filtro `nevasenda_fix_gpx_filetype()` en `wp_check_filetype_and_ext` fuerza `ext=gpx`/`type=application/gpx+xml` cuando la extensión es `.gpx` y WP no reconoce el tipo.
+
+## Paso 15 — Etapas múltiples en el mapa
+- El campo único "Track GPX" se sustituye por un repetidor **"Etapas de la ruta"** en el metabox: cada etapa tiene un nombre (ej. "Etapa 1: Refugio - Cumbre") y su propio `.gpx`, botones "+ Añadir etapa" / "Eliminar etapa". Se guarda como array serializado en `_ruta_etapas` (helper `nevasenda_ruta_etapas()`).
+- Migración automática: si una ruta tenía el antiguo `_ruta_gpx` (un solo track con extensión `.gpx`), se carga como "Etapa 1" al abrir el editor.
+- `single-ruta.php`: el mapa Leaflet dibuja **todas las etapas a la vez**, cada una con un color distinto (`nevasenda_etapa_colors()`), y ajusta la vista (`fitBounds`) a la unión de todos los tracks. Si hay más de una etapa, se muestra una leyenda con el nombre y color de cada una debajo del mapa.
+- Pa probarlo: editar una Ruta, "+ Añadir etapa" varias veces, dar nombre y subir un `.gpx` distinto a cada una, guardar, recargar ficha — el mapa debe mostrar todos los tracks con colores diferentes y la leyenda debajo.
+- **Fix marcadores**: los `<wpt>` (puntos de interés del GPX: lagos, refugios, miradores...) salían como icono roto, porque `leaflet-gpx` usa por defecto rutas relativas a iconos que no existen. Se fijan `marker_options` en el script inline apuntando a los iconos por defecto de Leaflet (`marker-icon.png` / `marker-shadow.png`), con tamaños/anclas correctos — ahora salen como chinchetas azules con popup (nombre del punto).
+
+## Paso 16 — Sección "Rutas para todos" rediseñada + galería gestionable desde wp-admin
+- Front-page: la sección "scrollytelling" (bloques que se resaltaban al hacer scroll) se sustituye por una rejilla estática `.features-grid` (imagen + 4 `.feature-card` con icono/título/texto: niveles, datos técnicos, comunidad, fotografía). Se quita el JS del IntersectionObserver de scrolly en `animations.js`.
+- Nuevo CPT **`foto_galeria`** ("Galería" en el menú admin): título + imagen destacada + orden (atributo de página). Helper `nevasenda_galeria_fotos( $limit )` devuelve las fotos publicadas con miniatura, ordenadas por "Orden".
+- `front-page.php` y `page-galeria.php`: la rejilla `.gallery-grid` ya no recorre `gallery-N.jpg` fijas del tema, recorre `nevasenda_galeria_fotos()`.
+- Sección "Comparte tu aventura" (CTA antes de la galería) ya no habla de subir fotos propias — ahora "Inspírate pa tu próxima ruta", solo enlaza a `/galeria/`.
+- mu-plugin **`nevasenda-galeria-import.php`**: importación única de las 14 fotos `gallery-N.jpg` del tema como posts `foto_galeria` con imagen destacada. Visitar `/wp-admin/?nevasenda_galeria_import=1` (logueado admin) una vez; `?nevasenda_galeria_reset=1` borra lo importado pa reimportar.
+- A partir de ahora, fotos de galería se gestionan en wp-admin → **Galería** → Añadir nueva foto (título + imagen destacada; "Orden" controla la posición).
+
 ## Hecho (ya no pendiente)
 - ✅ Tema activado, menú principal asignado a `primary` (Inicio, Rutas, Galería, Comunidad, Blog) vía `wp-content/mu-plugins/nevasenda-menu-fix.php` (one-shot, se puede borrar ya que cumplió su función).
 - ✅ Taxonomías y contenido demo importados (`nevasenda-demo-content.php`).
