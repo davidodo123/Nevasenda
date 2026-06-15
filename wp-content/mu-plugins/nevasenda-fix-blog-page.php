@@ -24,7 +24,23 @@ add_action( 'admin_init', function () {
 		$page = get_post( $page_id );
 	}
 
+	// Página "Inicio": vacía, solo sirve pa que page_on_front apunte a algo
+	// válido -- el contenido real de "/" lo pinta front-page.php (tiene
+	// prioridad sobre page.php pa la página de portada).
+	$inicio = get_page_by_path( 'inicio' );
+
+	if ( ! $inicio ) {
+		$inicio_id = wp_insert_post( array(
+			'post_title'   => 'Inicio',
+			'post_name'    => 'inicio',
+			'post_status'  => 'publish',
+			'post_type'    => 'page',
+		) );
+		$inicio = get_post( $inicio_id );
+	}
+
 	update_option( 'show_on_front', 'page' );
+	update_option( 'page_on_front', $inicio->ID );
 	update_option( 'page_for_posts', $page->ID );
 
 	$blog_url = get_permalink( $page->ID );

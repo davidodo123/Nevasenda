@@ -83,7 +83,7 @@ if ( ! empty( $asgarosforum ) ) {
 		<h2 class="section-title">Rutas destacadas</h2>
 		<p class="section-subtitle">Las últimas rutas añadidas a nuestro catálogo</p>
 
-		<div class="cards-grid">
+		<div class="rutas-grid">
 			<?php
 			$rutas = new WP_Query( array(
 				'post_type'      => 'ruta',
@@ -97,34 +97,32 @@ if ( ! empty( $asgarosforum ) ) {
 					$desnivel   = nevasenda_ruta_meta( get_the_ID(), 'desnivel' );
 					$duracion   = nevasenda_ruta_meta( get_the_ID(), 'duracion' );
 					$dificultad = get_the_terms( get_the_ID(), 'dificultad' );
+					$zona       = get_the_terms( get_the_ID(), 'zona' );
 					?>
-					<article class="card">
-						<?php if ( has_post_thumbnail() ) : ?>
-							<div class="card-img">
-								<a href="<?php the_permalink(); ?>"><?php the_post_thumbnail( 'medium_large' ); ?></a>
-								<?php if ( $desnivel || $duracion ) : ?>
-									<div class="card-overlay">
-										<?php if ( $desnivel ) : ?>
-											<span><strong><?php echo esc_html( $desnivel ); ?> m</strong>Desnivel</span>
-										<?php endif; ?>
-										<?php if ( $duracion ) : ?>
-											<span><strong><?php echo esc_html( $duracion ); ?></strong>Duración</span>
-										<?php endif; ?>
-									</div>
-								<?php endif; ?>
-							</div>
-						<?php endif; ?>
-						<div class="card-body">
-							<h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
-							<div class="card-meta">
-								<?php if ( $distancia ) : ?><span class="badge"><?php echo esc_html( $distancia ); ?> km</span><?php endif; ?>
+					<article class="ruta-card">
+						<a href="<?php the_permalink(); ?>" class="ruta-card__media">
+							<?php if ( has_post_thumbnail() ) the_post_thumbnail( 'medium_large' ); ?>
+							<div class="ruta-card__top">
 								<?php if ( ! empty( $dificultad ) && ! is_wp_error( $dificultad ) ) : ?>
-									<span class="badge badge-blue"><?php echo esc_html( $dificultad[0]->name ); ?></span>
+									<span class="ruta-card__pill ruta-card__pill--<?php echo esc_attr( $dificultad[0]->slug ); ?>"><?php echo esc_html( $dificultad[0]->name ); ?></span>
+								<?php endif; ?>
+								<?php if ( $distancia ) : ?>
+									<span class="ruta-card__pill"><?php echo nevasenda_icon( 'ruler' ); ?><?php echo esc_html( $distancia ); ?> km</span>
 								<?php endif; ?>
 							</div>
-							<div class="card-excerpt"><?php the_excerpt(); ?></div>
-							<a class="card-link" href="<?php the_permalink(); ?>">Ver ruta &rarr;</a>
+							<div class="ruta-card__info">
+								<h3><?php the_title(); ?></h3>
+								<?php if ( ! empty( $zona ) && ! is_wp_error( $zona ) ) : ?>
+									<span class="ruta-card__zona"><?php echo nevasenda_icon( 'pin' ); ?><?php echo esc_html( $zona[0]->name ); ?></span>
+								<?php endif; ?>
+							</div>
+						</a>
+						<div class="ruta-card__stats">
+							<div class="ruta-card__stat"><?php echo nevasenda_icon( 'ruler' ); ?><strong><?php echo $distancia ? esc_html( $distancia ) . ' km' : '–'; ?></strong>Distancia</div>
+							<div class="ruta-card__stat"><?php echo nevasenda_icon( 'terrain' ); ?><strong><?php echo $desnivel ? esc_html( $desnivel ) . ' m' : '–'; ?></strong>Desnivel</div>
+							<div class="ruta-card__stat"><?php echo nevasenda_icon( 'clock' ); ?><strong><?php echo $duracion ? esc_html( $duracion ) : '–'; ?></strong>Duración</div>
 						</div>
+						<a class="ruta-card__link" href="<?php the_permalink(); ?>">Ver ruta <?php echo nevasenda_icon( 'arrow' ); ?></a>
 					</article>
 					<?php
 				endwhile;

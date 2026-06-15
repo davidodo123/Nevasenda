@@ -72,14 +72,40 @@ Sitio WP local: `Local Sites/senderismo/app/public`. Tema custom clásico (sin c
 - `front-page.php`: el bloque `.forum-preview` ya no usa hilos de ejemplo hardcodeados — calcula `$foros_preview` recorriendo `$asgarosforum->content->get_categories()` / `get_forums()` y enlaza a cada foro real con `get_link('forum', $id)`, mostrando nº de temas (`get_forum_topic_counter()`) y descripción.
 - `style.css`: nueva sección "Foro real (Asgaros Forum)" — `.forum-wrapper` (tarjeta a juego con el resto del sitio) + overrides de `#af-wrapper` (tipografía `--font-base`, azul `--c-blue`/`--c-blue-dark` en vez del `#256db3` por defecto, filas alternas en `--c-gray-100`, inputs/botones con el radio y bordes del tema).
 
+## Paso 10 — Blog: contenido propio, página dedicada y mejor diseño de tarjetas
+- `wp-content/mu-plugins/nevasenda-blog-content.php`: importador one-shot con 5 entradas de blog propias (refugios Pirineos, guía de botas, crónica Picos de Europa, estado senderos Sierra Nevada, quedadas de otoño). Visitar `/wp-admin/?nevasenda_blog_import=1` logueado como admin (`?nevasenda_blog_reset=1` pa borrar y reimportar).
+- `wp-content/mu-plugins/nevasenda-fix-blog-page.php`: crea página "Blog", la fija como página de entradas (Ajustes > Lectura) y actualiza el enlace del menú. Visitar `/wp-admin/?nevasenda_fix_blog=1`.
+- **Fix "Inicio" llevaba al Blog**: la versión anterior de `nevasenda-fix-blog-page.php` ponía `show_on_front = page` y `page_for_posts` = página Blog, pero no fijaba `page_on_front`, así que `/` también acababa mostrando `home.php` (listado de posts) en vez de `front-page.php`. Ahora el script también crea una página vacía "Inicio" (`/inicio/`, solo de soporte — el contenido real de `/` lo sigue pintando `front-page.php`, que tiene prioridad sobre `page.php` pa la portada) y la asigna como `page_on_front`. **Hay que volver a visitar `/wp-admin/?nevasenda_fix_blog=1` logueado como admin** pa aplicar el fix (es idempotente, no duplica páginas).
+- `wp-content/mu-plugins/nevasenda-menu-add-foro.php`: añade el ítem "Comunidad"/Foro al menú principal (one-shot).
+- **Fotos**: cada entrada de blog ahora tiene imagen destacada propia (`uploads/2026/06/blog-refugios.jpg`, `blog-botas.jpg`, `blog-picos-europa.jpg`, `blog-sierra-nevada.jpg`, `blog-quedadas.jpg`, de Unsplash). El importador las asigna al crear las entradas. Pa entradas ya importadas antes sin foto, visitar `/wp-admin/?nevasenda_blog_images=1` (one-shot, no duplica si ya tienen imagen destacada).
+- **Tarjetas de blog rediseñadas** (`home.php` + `style.css`): la primera entrada del listado (`.cards-grid--blog .card--featured`) ocupa el ancho completo en formato 2 columnas (foto grande + texto), el resto sigue en grid normal. Todas las tarjetas con foto muestran un badge `.card-date` (día/mes) sobre la imagen, y un `.card-meta-row` con fecha completa + minutos de lectura estimados (`nevasenda_reading_time()` en `functions.php`, ~200 palabras/min).
+- `single.php`: añadido `.entry-meta` (fecha + minutos de lectura) bajo el título de cada entrada, mismo estilo que las tarjetas.
+
+## Paso 11 — Tarjetas de ruta rediseñadas (AllTrails/Komoot)
+- Nueva clase `.ruta-card` (sustituye a `.card` en "Rutas destacadas" del home y en `/rutas/`), grid `.rutas-grid`. Foto a pantalla completa con degradado inferior; sobre la imagen, pills flotantes con dificultad (color por nivel: Fácil azul, Media ámbar, Difícil negro) y distancia, más título y zona (icono pin) en overlay inferior.
+- Debajo de la foto, fila de estadísticas con iconos (`.ruta-card__stats`): distancia, desnivel y duración, separadas por divisores.
+- Pie de tarjeta `.ruta-card__link` "Ver ruta" con flecha animada al hover.
+- Iconos SVG inline centralizados en `nevasenda_icon( $name )` (`functions.php`): `ruler`, `terrain`, `clock`, `pin`, `arrow`.
+- Quitada la clase `.card-overlay` (ya no se usa, era de las tarjetas de ruta antiguas). `.badge`/`.badge-blue`/`.card-meta` se mantienen porque `single-ruta.php` los sigue usando pa los badges de zona/dificultad de la ficha.
+
+## Paso 12 — Ficha de ruta: mapa Wikiloc y requisitos/material
+- Metabox "Datos técnicos" (editor de Ruta) ampliado con 2 campos nuevos: **Enlace a Wikiloc** (URL del track) y **Requisitos / material recomendado** (textarea, un punto por línea). Guardado en `_ruta_wikiloc` y `_ruta_requisitos`.
+- `single-ruta.php`: nueva sección `.ruta-extra` (2 columnas, debajo del contenido):
+  - **Mapa de la ruta**: si la URL de Wikiloc trae un ID numérico (`nevasenda_wikiloc_id()` en `functions.php`, extrae `/\d{5,}/` de la URL), embebe el widget `https://es.wikiloc.com/wikiloc/spatialArtifactWidget.do?id=...` (mapa + perfil del track) + botón "Ver track completo en Wikiloc" (abre en pestaña nueva). Si no hay ID pero sí URL, solo se muestra el botón.
+  - **Requisitos y material recomendado**: cada línea del campo se pinta como item de checklist con icono `check`.
+  - Toda la sección se oculta si la ruta no tiene ni Wikiloc ni requisitos rellenados.
+- Pa probarlo: editar una Ruta existente, rellenar "Enlace a Wikiloc" (ej. `https://es.wikiloc.com/rutas-senderismo/xxxxx-123456789`) y/o "Requisitos / material recomendado", guardar.
+
 ## Hecho (ya no pendiente)
 - ✅ Tema activado, menú principal asignado a `primary` (Inicio, Rutas, Galería, Comunidad, Blog) vía `wp-content/mu-plugins/nevasenda-menu-fix.php` (one-shot, se puede borrar ya que cumplió su función).
 - ✅ Taxonomías y contenido demo importados (`nevasenda-demo-content.php`).
 - ✅ Galería con 14 fotos + página `/galeria/`.
 - ✅ Foro real con Asgaros Forum, 3 foros creados, integrado en `/foro/` y preview dinámico en home.
+- ✅ Blog con contenido propio, página dedicada y tarjetas con foto + fecha + tiempo de lectura.
 
 ## Pendiente (próximos pasos)
 - Crear páginas: Sobre nosotros, Contacto (form con plugin, ej. Contact Form 7).
 - Logo real (de momento texto "Nevasenda").
 - Borrar `wp-content/mu-plugins/nevasenda-menu-fix.php` una vez confirmado el menú en Apariencia > Menús.
 - Visitar `/wp-admin/?nevasenda_foro_shortcode=1` (si aún no se ha hecho) pa que `/foro/` muestre el foro real.
+- Ejecutar (si no se ha hecho) `?nevasenda_blog_import=1`, `?nevasenda_fix_blog=1` y `?nevasenda_blog_images=1` pa que el blog tenga contenido, página dedicada y fotos.

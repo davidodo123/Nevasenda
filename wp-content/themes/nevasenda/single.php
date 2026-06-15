@@ -11,6 +11,12 @@ get_header();
 			?>
 			<h1 class="entry-title"><?php the_title(); ?></h1>
 
+			<div class="entry-meta">
+				<span><?php echo esc_html( get_the_date() ); ?></span>
+				<span class="dot"></span>
+				<span><?php echo esc_html( nevasenda_reading_time() ); ?> min de lectura</span>
+			</div>
+
 			<?php if ( has_post_thumbnail() ) : ?>
 				<div class="ruta-hero"><?php the_post_thumbnail( 'large' ); ?></div>
 			<?php endif; ?>
