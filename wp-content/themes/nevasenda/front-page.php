@@ -245,6 +245,36 @@ if ( ! empty( $asgarosforum ) ) {
 	</div>
 </section>
 
+<?php $testimonios = nevasenda_testimonios( 8 ); ?>
+<?php if ( $testimonios ) : ?>
+<section class="section section-alt">
+	<div class="container">
+		<h2 class="section-title">Lo que dice nuestra comunidad</h2>
+		<p class="section-subtitle">Opiniones de senderistas que ya han caminado con nosotros</p>
+
+		<div class="testimonios-grid">
+			<?php foreach ( $testimonios as $t ) : ?>
+				<div class="testimonio-card">
+					<?php echo nevasenda_render_stars( $t['rating'] ); ?>
+					<p class="testimonio-text">&ldquo;<?php echo esc_html( $t['texto'] ); ?>&rdquo;</p>
+					<div class="testimonio-author">
+						<?php if ( $t['avatar'] ) : ?>
+							<img class="testimonio-avatar" src="<?php echo esc_url( $t['avatar'] ); ?>" alt="">
+						<?php else : ?>
+							<span class="avatar"><?php echo esc_html( mb_substr( $t['nombre'], 0, 1 ) ); ?></span>
+						<?php endif; ?>
+						<div>
+							<strong><?php echo esc_html( $t['nombre'] ); ?></strong>
+							<?php if ( $t['rol'] ) : ?><span><?php echo esc_html( $t['rol'] ); ?></span><?php endif; ?>
+						</div>
+					</div>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+</section>
+<?php endif; ?>
+
 <section class="photo-section photo-section--right">
 	<img class="photo-section-bg" src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/section-2.jpg' ); ?>" alt="">
 	<div class="container">

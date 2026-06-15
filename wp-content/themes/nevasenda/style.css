@@ -1208,6 +1208,209 @@ h3 { font-size: 1.4rem; }
 .footer-social svg { width: 18px; height: 18px; fill: currentColor; }
 
 /* ==========================================================================
+   10. Valoraciones, testimonios y opiniones de ruta
+   ========================================================================== */
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  vertical-align: middle;
+}
+.star-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--c-gray-300);
+}
+.star-icon.is-filled svg { fill: var(--c-amber); }
+
+.ruta-title-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: -16px 0 24px;
+  font-size: .95rem;
+  color: var(--c-gray-600);
+}
+.ruta-title-rating strong { color: var(--c-black); }
+.ruta-title-rating a { color: var(--c-blue); font-weight: 600; }
+
+/* Testimonios (portada) */
+.testimonios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+.testimonio-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--c-white);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  padding: 28px 24px;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.testimonio-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-blue);
+}
+.testimonio-text {
+  margin: 0;
+  flex-grow: 1;
+  color: var(--c-gray-600);
+  font-size: .95rem;
+}
+.testimonio-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.testimonio-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.testimonio-author strong { display: block; font-size: .95rem; }
+.testimonio-author span { display: block; font-size: .8rem; color: var(--c-gray-600); }
+
+/* Opiniones y valoraciones de una ruta */
+.ruta-rating-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .9rem;
+  color: var(--c-gray-600);
+}
+.ruta-rating-summary strong { font-size: 1.1rem; color: var(--c-black); }
+.ruta-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.ruta-review {
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--c-gray-300);
+}
+.ruta-review:last-child { border-bottom: none; padding-bottom: 0; }
+.ruta-review__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.ruta-review__author {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ruta-review__author strong { font-size: .95rem; }
+.ruta-review__head time { font-size: .8rem; color: var(--c-gray-600); flex-shrink: 0; }
+.ruta-review p { margin: 0; color: var(--c-gray-600); font-size: .92rem; }
+.ruta-reviews-empty { color: var(--c-gray-600); font-size: .95rem; }
+
+/* Formulario de opiniones + valoración por estrellas */
+.ruta-review-form {
+  margin-top: 8px;
+  padding-top: 24px;
+  border-top: 1px solid var(--c-gray-300);
+}
+.ruta-review-form #reply-title { font-size: 1.1rem; margin-bottom: 16px; }
+.rating-input {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  gap: 4px;
+}
+.rating-input input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+.rating-input label { cursor: pointer; }
+.rating-input label svg {
+  width: 26px;
+  height: 26px;
+  fill: var(--c-gray-300);
+  transition: fill .15s ease;
+}
+.rating-input input:checked + label svg,
+.rating-input input:checked ~ label svg,
+.rating-input label:hover svg,
+.rating-input label:hover ~ label svg { fill: var(--c-amber); }
+
+.comment-form p,
+.auth-form p { margin: 0 0 16px; }
+.comment-form label,
+.auth-form label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 6px; }
+.comment-form input[type="text"],
+.comment-form input[type="email"],
+.comment-form input[type="url"],
+.comment-form textarea,
+.auth-form input[type="text"],
+.auth-form input[type="email"],
+.auth-form input[type="password"] {
+  width: 100%;
+  padding: .65em .9em;
+  border: 1px solid var(--c-gray-300);
+  border-radius: 4px;
+  font-family: var(--font-base);
+  font-size: .95rem;
+}
+.comment-form input:focus,
+.comment-form textarea:focus,
+.auth-form input:focus { outline: none; border-color: var(--c-blue); }
+.comment-form .form-submit { margin-bottom: 0; }
+
+/* Bloqueo del formulario de opiniones pa usuarios sin sesión */
+.ruta-review-form--locked { text-align: center; }
+.ruta-review-form--locked p { margin: 0 0 12px; color: var(--c-gray-600); }
+
+/* Página "Mi cuenta" (login / registro) */
+.auth-card {
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--c-white);
+  border: 1px solid var(--c-gray-300);
+  border-radius: 8px;
+  padding: 32px;
+}
+.auth-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--c-gray-300);
+}
+.auth-tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  font-weight: 600;
+  color: var(--c-gray-600);
+  border-bottom: 2px solid transparent;
+}
+.auth-tab.is-active { color: var(--c-blue); border-color: var(--c-blue); }
+.auth-error {
+  background: #fdecea;
+  color: #c0392b;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: .9rem;
+}
+.auth-form .btn {
+  width: 100%;
+  text-align: center;
+  font-family: inherit;
+  cursor: pointer;
+}
+.auth-switch { margin-top: 16px; text-align: center; font-size: .9rem; color: var(--c-gray-600); }
+.auth-switch a { color: var(--c-blue); font-weight: 600; }
+
+/* ==========================================================================
    9. Animaciones / scroll-reveal
    ========================================================================== */
 @keyframes fade-up {

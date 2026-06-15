@@ -126,6 +126,23 @@ Sitio WP local: `Local Sites/senderismo/app/public`. Tema custom clásico (sin c
 - mu-plugin **`nevasenda-galeria-import.php`**: importación única de las 14 fotos `gallery-N.jpg` del tema como posts `foto_galeria` con imagen destacada. Visitar `/wp-admin/?nevasenda_galeria_import=1` (logueado admin) una vez; `?nevasenda_galeria_reset=1` borra lo importado pa reimportar.
 - A partir de ahora, fotos de galería se gestionan en wp-admin → **Galería** → Añadir nueva foto (título + imagen destacada; "Orden" controla la posición).
 
+## Paso 17 — Reviews: testimonios en portada + opiniones por ruta
+- Icono nuevo `star` + helper `nevasenda_render_stars( $rating, $max = 5 )` (estrellas llenas/vacías, reutilizable).
+- **Testimonios de la web (portada)**: nuevo CPT `testimonio` (título = nombre, contenido = texto, imagen destacada = avatar, meta `_testimonio_rol` y `_testimonio_rating` 1-5 vía metabox). Helper `nevasenda_testimonios( $limit )`. Nueva sección "Lo que dice nuestra comunidad" en `front-page.php` (`.testimonios-grid` / `.testimonio-card`), entre "Comunidad y noticias" y "Inspírate pa tu próxima ruta". mu-plugin `nevasenda-testimonios-seed.php` crea 4 testimonios de ejemplo (`?nevasenda_testimonios_import=1`, reset con `?nevasenda_testimonios_reset=1`).
+- **Opiniones por ruta**: el CPT `ruta` ahora soporta `comments`. Cada comentario aprobado puede llevar una valoración 1-5 guardada como comment meta `rating` (filtro `comment_post` → `nevasenda_save_comment_rating()`). Helper `nevasenda_ruta_rating_stats( $post_id )` calcula media y nº de opiniones.
+- `single-ruta.php`: bajo el título se muestra la media + enlace "N opiniones" (ancla `#opiniones`) si hay valoraciones. Al final de la ficha, nueva tarjeta `.ruta-reviews-card` (`id="opiniones"`) con resumen de valoración, listado de opiniones (autor, estrellas, fecha, texto) y formulario `comment_form()` con selector de estrellas (`nevasenda_rating_field_html()`, radios CSS-only en `.rating-input`).
+- Filtro `comments_open` fuerza opiniones abiertas en todas las rutas pa usuarios registrados (incluidas las rutas creadas antes de añadir soporte de comentarios al CPT, que quedaron con `comment_status=closed`); ver Paso 18 pa el requisito de login.
+- Pa probarlo: visitar una ficha de ruta logueado, rellenar "Deja tu opinión" (estrellas + texto) y publicar — debe aparecer en el listado (si la moderación de comentarios de WP lo requiere, aprobar desde wp-admin → Comentarios) y actualizar la media. Pa testimonios: `/wp-admin/?nevasenda_testimonios_import=1`, luego editar/añadir desde wp-admin → Testimonios.
+
+## Paso 18 — Login / registro pa poder opinar
+
+- Cualquiera puede registrarse: filtro `pre_option_users_can_register` devuelve siempre `true` (rol por defecto "Suscriptor", sin tocar Ajustes > Generales).
+- Nueva página `page-cuenta.php` (plantilla pa una página con slug `cuenta`, ej. `/cuenta/`): tarjeta `.auth-card` con pestañas "Iniciar sesión" / "Crear cuenta" (`?panel=login|register`), formularios que envían a `admin-post.php`.
+- `nevasenda_handle_login()` (acción `nevasenda_login`, vía `wp_signon()`) y `nevasenda_handle_register()` (acción `nevasenda_register`, vía `wp_insert_user()` con rol `subscriber` + `wp_set_auth_cookie()`) procesan los formularios; errores vuelven a `/cuenta/?panel=...&error=...`. Ambos soportan `redirect_to`.
+- Menú principal: `nevasenda_auth_menu_item()` añade "Iniciar sesión" o "Cerrar sesión (Nombre)" al final del menú `primary` (filtro `wp_nav_menu_items` y también en `nevasenda_fallback_menu()`).
+- **Opiniones de ruta requieren sesión**: el filtro `comments_open` (Paso 17) ahora exige `is_user_logged_in()` pa las `ruta`. En `single-ruta.php`, si no hay sesión, en vez de `comment_form()` se muestra `.ruta-review-form--locked` con un botón "Iniciar sesión" que lleva a `/cuenta/` con `redirect_to` de vuelta a `#opiniones` de esa ruta.
+- Pa probarlo: crear una página "Cuenta" con slug `cuenta` (Páginas → Añadir nueva, publicar vacía; usará automáticamente `page-cuenta.php`). Luego: sin sesión, en una ficha de ruta debe verse el aviso "Inicia sesión..."; al registrarte/entrar, vuelve a esa ruta y ya se ve el formulario de opinión completo.
+
 ## Hecho (ya no pendiente)
 - ✅ Tema activado, menú principal asignado a `primary` (Inicio, Rutas, Galería, Comunidad, Blog) vía `wp-content/mu-plugins/nevasenda-menu-fix.php` (one-shot, se puede borrar ya que cumplió su función).
 - ✅ Taxonomías y contenido demo importados (`nevasenda-demo-content.php`).
@@ -134,6 +151,7 @@ Sitio WP local: `Local Sites/senderismo/app/public`. Tema custom clásico (sin c
 - ✅ Blog con contenido propio, página dedicada y tarjetas con foto + fecha + tiempo de lectura.
 
 ## Pendiente (próximos pasos)
+- Crear la página "Cuenta" (slug `cuenta`) pa que `/cuenta/` use `page-cuenta.php` (ver Paso 18).
 - Crear páginas: Sobre nosotros, Contacto (form con plugin, ej. Contact Form 7).
 - Logo real (de momento texto "Nevasenda").
 - Borrar `wp-content/mu-plugins/nevasenda-menu-fix.php` una vez confirmado el menú en Apariencia > Menús.

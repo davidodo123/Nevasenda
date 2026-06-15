@@ -15,6 +15,8 @@ while ( have_posts() ) :
 	$dificultad = get_the_terms( get_the_ID(), 'dificultad' );
 	$zona       = get_the_terms( get_the_ID(), 'zona' );
 
+	$rating_stats = nevasenda_ruta_rating_stats( get_the_ID() );
+
 	$etapas = nevasenda_ruta_etapas( get_the_ID() );
 	$colors = nevasenda_etapa_colors();
 	$etapas_data = array();
@@ -30,6 +32,14 @@ while ( have_posts() ) :
 	<section class="section">
 		<div class="container">
 			<h1 class="entry-title"><?php the_title(); ?></h1>
+
+			<?php if ( $rating_stats['count'] ) : ?>
+				<div class="ruta-title-rating">
+					<?php echo nevasenda_render_stars( $rating_stats['avg'] ); ?>
+					<strong><?php echo esc_html( number_format_i18n( $rating_stats['avg'], 1 ) ); ?></strong>
+					<a href="#opiniones"><?php echo esc_html( $rating_stats['count'] ); ?> opiniones</a>
+				</div>
+			<?php endif; ?>
 
 			<div class="card-meta" style="justify-content:center; margin-bottom: 24px;">
 				<?php if ( ! empty( $zona ) && ! is_wp_error( $zona ) ) : ?>
@@ -70,8 +80,9 @@ while ( have_posts() ) :
 				<?php the_content(); ?>
 			</div>
 
-			<?php if ( $etapas_data || $wikiloc || $requisitos ) : ?>
-				<div class="ruta-extra">
+			<?php $reviews = get_comments( array( 'post_id' => get_the_ID(), 'status' => 'approve' ) ); ?>
+
+			<div class="ruta-extra">
 					<?php if ( $etapas_data ) : ?>
 						<div class="ruta-card ruta-map-card">
 							<div class="ruta-card__head">
@@ -123,8 +134,58 @@ while ( have_posts() ) :
 							</div>
 						</div>
 					<?php endif; ?>
+						<div class="ruta-card ruta-reviews-card" id="opiniones">
+							<div class="ruta-card__head">
+								<h2><?php echo nevasenda_icon( 'star' ); ?>Opiniones</h2>
+								<?php if ( $rating_stats['count'] ) : ?>
+									<div class="ruta-rating-summary">
+										<?php echo nevasenda_render_stars( $rating_stats['avg'] ); ?>
+										<strong><?php echo esc_html( number_format_i18n( $rating_stats['avg'], 1 ) ); ?></strong>
+										<span><?php echo esc_html( $rating_stats['count'] ); ?> opiniones</span>
+									</div>
+								<?php endif; ?>
+							</div>
+
+							<?php if ( $reviews ) : ?>
+								<div class="ruta-review-list">
+									<?php foreach ( $reviews as $review ) : ?>
+										<?php $review_rating = (int) get_comment_meta( $review->comment_ID, 'rating', true ); ?>
+										<div class="ruta-review">
+											<div class="ruta-review__head">
+												<span class="avatar"><?php echo esc_html( mb_substr( $review->comment_author, 0, 1 ) ); ?></span>
+												<div class="ruta-review__author">
+													<strong><?php echo esc_html( $review->comment_author ); ?></strong>
+													<?php if ( $review_rating ) : ?><?php echo nevasenda_render_stars( $review_rating ); ?><?php endif; ?>
+												</div>
+												<time><?php echo esc_html( get_comment_date( 'd/m/Y', $review ) ); ?></time>
+											</div>
+											<p><?php echo esc_html( $review->comment_content ); ?></p>
+										</div>
+									<?php endforeach; ?>
+								</div>
+							<?php else : ?>
+								<p class="ruta-reviews-empty">Todavía no hay opiniones de esta ruta. ¡Sé el primero en compartir la tuya!</p>
+							<?php endif; ?>
+
+							<?php if ( is_user_logged_in() ) : ?>
+								<div class="ruta-review-form">
+									<?php
+									comment_form( array(
+										'title_reply'   => 'Deja tu opinión',
+										'class_submit'  => 'btn',
+										'label_submit'  => 'Publicar opinión',
+										'comment_field' => nevasenda_rating_field_html(),
+									) );
+									?>
+								</div>
+							<?php else : ?>
+								<div class="ruta-review-form ruta-review-form--locked">
+									<p>Inicia sesión pa dejar tu opinión sobre esta ruta.</p>
+									<a class="btn" href="<?php echo esc_url( add_query_arg( 'redirect_to', rawurlencode( get_permalink() . '#opiniones' ), home_url( '/cuenta/' ) ) ); ?>">Iniciar sesión</a>
+								</div>
+							<?php endif; ?>
+						</div>
 				</div>
-			<?php endif; ?>
 		</div>
 	</section>
 

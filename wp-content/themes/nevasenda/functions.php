@@ -53,7 +53,7 @@ function nevasenda_register_rutas() {
 		'has_archive'  => true,
 		'rewrite'      => array( 'slug' => 'rutas' ),
 		'menu_icon'    => 'dashicons-palmtree',
-		'supports'     => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
+		'supports'     => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
 		'show_in_rest' => true,
 	) );
 
@@ -126,6 +126,107 @@ function nevasenda_galeria_fotos( $limit = -1 ) {
 
 	return $fotos;
 }
+
+/**
+ * CPT Testimonios: opiniones sobre la web gestionadas desde wp-admin
+ * (título = nombre, contenido = texto, imagen destacada = avatar).
+ */
+function nevasenda_register_testimonios() {
+	register_post_type( 'testimonio', array(
+		'labels' => array(
+			'name'          => 'Testimonios',
+			'singular_name' => 'Testimonio',
+			'add_new_item'  => 'Añadir nuevo testimonio',
+			'edit_item'     => 'Editar testimonio',
+			'all_items'     => 'Testimonios',
+			'menu_name'     => 'Testimonios',
+		),
+		'public'       => false,
+		'show_ui'      => true,
+		'show_in_menu' => true,
+		'menu_icon'    => 'dashicons-star-filled',
+		'supports'     => array( 'title', 'editor', 'thumbnail', 'page-attributes' ),
+		'show_in_rest' => true,
+	) );
+}
+add_action( 'init', 'nevasenda_register_testimonios' );
+
+/**
+ * Testimonios publicados, ordenados por "Orden" (Atributos de página) y fecha.
+ */
+function nevasenda_testimonios( $limit = -1 ) {
+	$query = new WP_Query( array(
+		'post_type'      => 'testimonio',
+		'post_status'    => 'publish',
+		'posts_per_page' => $limit,
+		'orderby'        => array( 'menu_order' => 'ASC', 'date' => 'DESC' ),
+	) );
+
+	$items = array();
+	foreach ( $query->posts as $post ) {
+		$items[] = array(
+			'nombre' => get_the_title( $post ),
+			'rol'    => get_post_meta( $post->ID, '_testimonio_rol', true ),
+			'texto'  => $post->post_content,
+			'rating' => (int) get_post_meta( $post->ID, '_testimonio_rating', true ),
+			'avatar' => has_post_thumbnail( $post ) ? get_the_post_thumbnail_url( $post, 'thumbnail' ) : '',
+		);
+	}
+	wp_reset_postdata();
+
+	return $items;
+}
+
+/**
+ * Metabox: rol/descripción y valoración del testimonio.
+ */
+function nevasenda_testimonio_metabox() {
+	add_meta_box( 'nevasenda_testimonio_datos', 'Datos del testimonio', 'nevasenda_testimonio_metabox_html', 'testimonio', 'side', 'default' );
+}
+add_action( 'add_meta_boxes', 'nevasenda_testimonio_metabox' );
+
+function nevasenda_testimonio_metabox_html( $post ) {
+	wp_nonce_field( 'nevasenda_testimonio_save', 'nevasenda_testimonio_nonce' );
+	$rol    = get_post_meta( $post->ID, '_testimonio_rol', true );
+	$rating = (int) get_post_meta( $post->ID, '_testimonio_rating', true );
+	if ( ! $rating ) {
+		$rating = 5;
+	}
+	?>
+	<p>
+		<label for="testimonio_rol">Rol / descripción</label><br>
+		<input type="text" id="testimonio_rol" name="testimonio_rol" value="<?php echo esc_attr( $rol ); ?>" class="widefat" placeholder="Senderista, Sierra Nevada" />
+	</p>
+	<p>
+		<label for="testimonio_rating">Valoración</label><br>
+		<select id="testimonio_rating" name="testimonio_rating" class="widefat">
+			<?php for ( $i = 5; $i >= 1; $i-- ) : ?>
+				<option value="<?php echo esc_attr( $i ); ?>" <?php selected( $rating, $i ); ?>><?php echo esc_html( $i ); ?> estrellas</option>
+			<?php endfor; ?>
+		</select>
+	</p>
+	<p class="description">El título es el nombre de la persona. El contenido (editor) es el texto de la opinión. La imagen destacada es el avatar (opcional).</p>
+	<?php
+}
+
+function nevasenda_save_testimonio_meta( $post_id ) {
+	if ( ! isset( $_POST['nevasenda_testimonio_nonce'] ) || ! wp_verify_nonce( $_POST['nevasenda_testimonio_nonce'], 'nevasenda_testimonio_save' ) ) {
+		return;
+	}
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		return;
+	}
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		return;
+	}
+	if ( isset( $_POST['testimonio_rol'] ) ) {
+		update_post_meta( $post_id, '_testimonio_rol', sanitize_text_field( wp_unslash( $_POST['testimonio_rol'] ) ) );
+	}
+	if ( isset( $_POST['testimonio_rating'] ) ) {
+		update_post_meta( $post_id, '_testimonio_rating', max( 1, min( 5, (int) $_POST['testimonio_rating'] ) ) );
+	}
+}
+add_action( 'save_post_testimonio', 'nevasenda_save_testimonio_meta' );
 
 /**
  * Permitir subir archivos .gpx (track de la ruta) a la mediateca.
@@ -433,6 +534,7 @@ function nevasenda_icon( $name ) {
 		'check'   => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
 		'users'   => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>',
 		'camera'  => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3L7.17 5H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>',
+		'star'    => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>',
 	);
 	return isset( $icons[ $name ] ) ? $icons[ $name ] : '';
 }
@@ -461,6 +563,87 @@ function nevasenda_render_ruta_stats( $items, $extra_class = '' ) {
 }
 
 /**
+ * Pinta $rating (0-5) como fila de estrellas (icono "star" lleno/vacío).
+ */
+function nevasenda_render_stars( $rating, $max = 5 ) {
+	$rating = (int) round( $rating );
+	$html   = '<span class="stars" aria-label="' . esc_attr( $rating . ' de ' . $max . ' estrellas' ) . '">';
+	for ( $i = 1; $i <= $max; $i++ ) {
+		$class = ( $i <= $rating ) ? 'star-icon is-filled' : 'star-icon';
+		$html .= '<span class="' . $class . '">' . nevasenda_icon( 'star' ) . '</span>';
+	}
+	$html .= '</span>';
+	return $html;
+}
+
+/**
+ * Valoración media (1-5) y nº de opiniones de una ruta, a partir de los
+ * comentarios aprobados que llevan meta "rating".
+ */
+function nevasenda_ruta_rating_stats( $post_id ) {
+	$comments = get_comments( array(
+		'post_id' => $post_id,
+		'status'  => 'approve',
+	) );
+
+	$total = 0;
+	$count = 0;
+	foreach ( $comments as $comment ) {
+		$rating = (int) get_comment_meta( $comment->comment_ID, 'rating', true );
+		if ( $rating < 1 || $rating > 5 ) {
+			continue;
+		}
+		$total += $rating;
+		$count++;
+	}
+
+	return array(
+		'avg'   => $count ? round( $total / $count, 1 ) : 0,
+		'count' => $count,
+	);
+}
+
+/**
+ * Guarda la valoración (1-5) enviada junto a un comentario de ruta como meta "rating".
+ */
+function nevasenda_save_comment_rating( $comment_id ) {
+	if ( ! isset( $_POST['rating'] ) ) {
+		return;
+	}
+	$comment = get_comment( $comment_id );
+	if ( ! $comment || 'ruta' !== get_post_type( $comment->comment_post_ID ) ) {
+		return;
+	}
+	$rating = (int) $_POST['rating'];
+	if ( $rating >= 1 && $rating <= 5 ) {
+		update_comment_meta( $comment_id, 'rating', $rating );
+	}
+}
+add_action( 'comment_post', 'nevasenda_save_comment_rating' );
+
+/**
+ * Las opiniones de una ruta solo están abiertas pa usuarios registrados
+ * (aunque la ruta se creara antes de añadir soporte de comentarios al CPT,
+ * cuyo "comment_status" quedó "closed").
+ */
+add_filter( 'comments_open', function ( $open, $post_id ) {
+	return 'ruta' === get_post_type( $post_id ) ? is_user_logged_in() : $open;
+}, 10, 2 );
+
+/**
+ * Campo de valoración (1-5 estrellas) + comentario pa el formulario de opiniones de una ruta.
+ */
+function nevasenda_rating_field_html() {
+	$html = '<p class="comment-form-rating"><label>Tu valoración</label><div class="rating-input">';
+	for ( $i = 5; $i >= 1; $i-- ) {
+		$checked = ( 5 === $i ) ? ' checked' : '';
+		$html   .= '<input type="radio" id="rating-' . $i . '" name="rating" value="' . $i . '"' . $checked . '><label for="rating-' . $i . '">' . nevasenda_icon( 'star' ) . '</label>';
+	}
+	$html .= '</div></p><p class="comment-form-comment"><label for="comment">Tu opinión</label><textarea id="comment" name="comment" cols="45" rows="4" required></textarea></p>';
+	return $html;
+}
+
+/**
  * Menú de respaldo si no hay un menú asignado en Apariencia > Menús,
  * pa que el nav nunca se vea vacío.
  */
@@ -480,5 +663,108 @@ function nevasenda_fallback_menu() {
 		}
 		printf( '<li><a href="%s">%s</a></li>', esc_url( $url ), esc_html( $label ) );
 	}
+	echo nevasenda_auth_menu_item();
 	echo '</ul>';
 }
+
+/**
+ * Login y registro
+ */
+
+// Cualquiera puede registrarse (rol "Suscriptor"), sin tocar Ajustes > Generales.
+add_filter( 'pre_option_users_can_register', '__return_true' );
+
+/**
+ * Enlace de "Iniciar sesión" / "Cerrar sesión" pa el menú principal.
+ */
+function nevasenda_auth_menu_item() {
+	if ( is_user_logged_in() ) {
+		$user = wp_get_current_user();
+		return '<li class="menu-item-auth"><a href="' . esc_url( wp_logout_url( home_url( '/' ) ) ) . '">Cerrar sesión (' . esc_html( $user->display_name ) . ')</a></li>';
+	}
+	return '<li class="menu-item-auth"><a href="' . esc_url( home_url( '/cuenta/' ) ) . '">Iniciar sesión</a></li>';
+}
+add_filter( 'wp_nav_menu_items', function ( $items, $args ) {
+	return 'primary' === $args->theme_location ? $items . nevasenda_auth_menu_item() : $items;
+}, 10, 2 );
+
+/**
+ * Procesa el registro desde la página "Mi cuenta" (rol "Suscriptor").
+ */
+function nevasenda_handle_register() {
+	$cuenta_url = home_url( '/cuenta/' );
+
+	if ( ! isset( $_POST['nevasenda_register_nonce'] ) || ! wp_verify_nonce( $_POST['nevasenda_register_nonce'], 'nevasenda_register' ) ) {
+		wp_safe_redirect( $cuenta_url );
+		exit;
+	}
+
+	$nombre   = sanitize_text_field( wp_unslash( $_POST['nombre'] ?? '' ) );
+	$email    = sanitize_email( wp_unslash( $_POST['email'] ?? '' ) );
+	$password = (string) ( $_POST['password'] ?? '' );
+
+	$error = '';
+	if ( ! $nombre ) {
+		$error = 'Indica tu nombre.';
+	} elseif ( ! is_email( $email ) ) {
+		$error = 'Ese email no es válido.';
+	} elseif ( email_exists( $email ) ) {
+		$error = 'Ya hay una cuenta registrada con ese email.';
+	} elseif ( strlen( $password ) < 6 ) {
+		$error = 'La contraseña debe tener al menos 6 caracteres.';
+	}
+
+	if ( $error ) {
+		wp_safe_redirect( add_query_arg( array( 'panel' => 'register', 'error' => rawurlencode( $error ) ), $cuenta_url ) );
+		exit;
+	}
+
+	$username = sanitize_user( current( explode( '@', $email ) ) . wp_generate_password( 4, false ), true );
+	$user_id  = wp_insert_user( array(
+		'user_login'   => $username,
+		'user_email'   => $email,
+		'user_pass'    => $password,
+		'display_name' => $nombre,
+		'nickname'     => $nombre,
+		'role'         => 'subscriber',
+	) );
+
+	if ( is_wp_error( $user_id ) ) {
+		wp_safe_redirect( add_query_arg( array( 'panel' => 'register', 'error' => rawurlencode( $user_id->get_error_message() ) ), $cuenta_url ) );
+		exit;
+	}
+
+	wp_set_auth_cookie( $user_id, true );
+	wp_safe_redirect( ! empty( $_POST['redirect_to'] ) ? wp_validate_redirect( wp_unslash( $_POST['redirect_to'] ), home_url( '/' ) ) : home_url( '/' ) );
+	exit;
+}
+add_action( 'admin_post_nopriv_nevasenda_register', 'nevasenda_handle_register' );
+add_action( 'admin_post_nevasenda_register', 'nevasenda_handle_register' );
+
+/**
+ * Procesa el inicio de sesión desde la página "Mi cuenta".
+ */
+function nevasenda_handle_login() {
+	$cuenta_url = home_url( '/cuenta/' );
+
+	if ( ! isset( $_POST['nevasenda_login_nonce'] ) || ! wp_verify_nonce( $_POST['nevasenda_login_nonce'], 'nevasenda_login' ) ) {
+		wp_safe_redirect( $cuenta_url );
+		exit;
+	}
+
+	$user = wp_signon( array(
+		'user_login'    => sanitize_text_field( wp_unslash( $_POST['email'] ?? '' ) ),
+		'user_password' => (string) ( $_POST['password'] ?? '' ),
+		'remember'      => true,
+	) );
+
+	if ( is_wp_error( $user ) ) {
+		wp_safe_redirect( add_query_arg( array( 'panel' => 'login', 'error' => rawurlencode( 'Email o contraseña incorrectos.' ) ), $cuenta_url ) );
+		exit;
+	}
+
+	wp_safe_redirect( ! empty( $_POST['redirect_to'] ) ? wp_validate_redirect( wp_unslash( $_POST['redirect_to'] ), home_url( '/' ) ) : home_url( '/' ) );
+	exit;
+}
+add_action( 'admin_post_nopriv_nevasenda_login', 'nevasenda_handle_login' );
+add_action( 'admin_post_nevasenda_login', 'nevasenda_handle_login' );
